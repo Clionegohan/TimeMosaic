@@ -36,5 +36,4 @@ Thumbs.db
 !.vscode/settings.json
 
 ### Prisma
-prisma/migrations/
-
+# Track migrations for reproducibility
