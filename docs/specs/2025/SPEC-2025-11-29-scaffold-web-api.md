@@ -1,7 +1,7 @@
 # Spec: Next.js/NestJS 最小スキャフォールド
 
 - Spec ID: SPEC-2025-11-29-scaffold-web-api
-- Status: Draft
+- Status: Accepted
 - Owners: @your-handle
 - Related: Time_Stack.md
 
@@ -17,4 +17,3 @@ Time_Stack.md に基づき、`apps/web`（Next.js App Router）と `apps/api`（
 ## Acceptance Criteria
 - [ ] `npm run dev` 相当で web/api の起動が確認できる（ローカル）
 - [ ] CI の build ジョブが通る
-
