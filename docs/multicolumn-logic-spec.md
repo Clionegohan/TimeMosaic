@@ -212,7 +212,7 @@ createColumns(events, ['歴史', '日本'])
 
 ### 開発フロー
 
-```
+```text
 Step 1: 統合テスト作成（RED）
   ↓ 実際のユースケースシナリオを定義
 
@@ -234,7 +234,7 @@ Step 4: コミット
 ## 実装方針
 
 ### ディレクトリ構成
-```
+```text
 src/lib/utils/
   ├── eventUtils.ts                  # ユーティリティ関数
   ├── types.ts                       # Column型定義

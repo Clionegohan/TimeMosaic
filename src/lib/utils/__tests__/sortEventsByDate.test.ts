@@ -179,5 +179,35 @@ describe('sortEventsByDate', () => {
       expect(sorted[0].date.year).toBe(1945);
       expect(sorted[1].date.year).toBe(1989);
     });
+
+    it('完全に同じ日付のイベントは元の順序を保持する（昇順）', () => {
+      const events: Event[] = [
+        { id: '1', date: { year: 1945, month: 8, day: 15 }, title: 'Event A', tags: [], raw: '' },
+        { id: '2', date: { year: 1945, month: 8, day: 15 }, title: 'Event B', tags: [], raw: '' },
+        { id: '3', date: { year: 1945, month: 8, day: 15 }, title: 'Event C', tags: [], raw: '' },
+      ];
+
+      const sorted = sortEventsByDate(events, 'asc');
+
+      // 元の順序を保持
+      expect(sorted[0].id).toBe('1');
+      expect(sorted[1].id).toBe('2');
+      expect(sorted[2].id).toBe('3');
+    });
+
+    it('完全に同じ日付のイベントは元の順序を保持する（降順）', () => {
+      const events: Event[] = [
+        { id: '1', date: { year: 1945, month: 8, day: 15 }, title: 'Event A', tags: [], raw: '' },
+        { id: '2', date: { year: 1945, month: 8, day: 15 }, title: 'Event B', tags: [], raw: '' },
+        { id: '3', date: { year: 1945, month: 8, day: 15 }, title: 'Event C', tags: [], raw: '' },
+      ];
+
+      const sorted = sortEventsByDate(events, 'desc');
+
+      // 降順でも元の順序を保持（安定ソート）
+      expect(sorted[0].id).toBe('1');
+      expect(sorted[1].id).toBe('2');
+      expect(sorted[2].id).toBe('3');
+    });
   });
 });

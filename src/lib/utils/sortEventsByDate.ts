@@ -15,8 +15,8 @@ export function sortEventsByDate(events: Event[], order: 'asc' | 'desc' = 'asc')
   // イミュータビリティのため、配列をコピー
   const sortedEvents = [...events];
 
-  // 日付比較関数
-  const compareDate = (a: Event, b: Event): number => {
+  // 日付比較関数（昇順）
+  const compareDateAsc = (a: Event, b: Event): number => {
     // 年の比較
     if (a.date.year !== b.date.year) {
       return a.date.year - b.date.year;
@@ -35,13 +35,11 @@ export function sortEventsByDate(events: Event[], order: 'asc' | 'desc' = 'asc')
     return aDay - bDay;
   };
 
-  // ソート実行
-  sortedEvents.sort(compareDate);
-
-  // 降順の場合は反転
-  if (order === 'desc') {
-    sortedEvents.reverse();
-  }
+  // ソート実行（降順の場合は比較関数を反転）
+  sortedEvents.sort((a, b) => {
+    const result = compareDateAsc(a, b);
+    return order === 'desc' ? -result : result;
+  });
 
   return sortedEvents;
 }
