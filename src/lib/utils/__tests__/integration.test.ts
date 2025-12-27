@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { extractAllTags, sortEventsByDate, createColumns } from '../eventUtils';
+import { extractAllTags, sortEventsByDate, createColumns } from '../index';
 import type { Event } from '../../parser/types';
 
 /**
