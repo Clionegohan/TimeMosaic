@@ -31,6 +31,7 @@ export function eventsApiPlugin(): Plugin {
             res.setHeader('Content-Type', 'application/json');
             res.statusCode = 200;
             res.end(JSON.stringify(result, null, 2));
+            return; // 明示的にreturnしてnext()の呼び出しを防ぐ
           } catch (error) {
             // エラーハンドリング
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
@@ -46,11 +47,12 @@ export function eventsApiPlugin(): Plugin {
                 2
               )
             );
+            return; // 明示的にreturnしてnext()の呼び出しを防ぐ
           }
-        } else {
-          // 他のリクエストは次のミドルウェアへ
-          next();
         }
+
+        // 他のリクエストは次のミドルウェアへ
+        next();
       });
     },
   };

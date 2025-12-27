@@ -32,8 +32,7 @@ describe('Events API Handler (ATDD)', () => {
       const result = await readEventsFromFile(sampleFilePath);
 
       // サンプルファイルには10個のイベントが含まれている
-      expect(result.events.length).toBeGreaterThan(0);
-      expect(result.events.length).toBeLessThanOrEqual(10);
+      expect(result.events.length).toBe(10);
     });
 
     it('パースされたイベントにはUUID v4が割り当てられる', async () => {
@@ -114,7 +113,7 @@ describe('Events API Handler (ATDD)', () => {
     });
 
     it('正常なイベントはパースエラーがあっても返される', async () => {
-      // この テストは不正なイベントを含むファイルで検証すべきだが、
+      // このテストは不正なイベントを含むファイルで検証すべきだが、
       // サンプルファイルは全て正常なので、パスする
       const result = await readEventsFromFile(sampleFilePath);
 
