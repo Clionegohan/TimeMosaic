@@ -220,6 +220,21 @@ describe('API Handlers (ATDD)', () => {
       expect(result.metadata.selectedTags).toEqual([]);
     });
 
+    it('空文字列タグをフィルタして処理する', async () => {
+      // 空文字列とホワイトスペースを含むタグ配列
+      const selectedTags = ['歴史', '', '  ', '日本'];
+      const sortOrder = 'asc';
+
+      // ハンドラーレベルでは配列を受け取るので、フィルタリング済みと想定
+      const filteredTags = selectedTags.filter((tag) => tag.trim().length > 0);
+      const result = await getColumns(sampleFilePath, filteredTags, sortOrder);
+
+      // 有効なタグのみで2列生成される
+      expect(result.columns).toHaveLength(2);
+      expect(result.columns[0].tag).toBe('歴史');
+      expect(result.columns[1].tag).toBe('日本');
+    });
+
     it('不正なソート順の場合、ascとして扱う', async () => {
       const selectedTags = ['歴史'];
       // 不正な値を 'asc' として扱う想定

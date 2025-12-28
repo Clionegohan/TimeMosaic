@@ -86,8 +86,28 @@ export function eventsApiPlugin(): Plugin {
               return;
             }
 
-            // タグを配列に変換
-            const selectedTags = tagsParam.split(',').map((tag) => tag.trim());
+            // タグを配列に変換（空文字列を除外）
+            const selectedTags = tagsParam
+              .split(',')
+              .map((tag) => tag.trim())
+              .filter((tag) => tag.length > 0);
+
+            // 有効なタグが0件の場合はエラー
+            if (selectedTags.length === 0) {
+              res.setHeader('Content-Type', 'application/json');
+              res.statusCode = 400;
+              res.end(
+                JSON.stringify(
+                  {
+                    error: 'At least one valid tag is required',
+                    example: '/api/columns?tags=歴史,日本&order=asc',
+                  },
+                  null,
+                  2
+                )
+              );
+              return;
+            }
 
             // ソート順のバリデーション
             const sortOrder = orderParam === 'desc' ? 'desc' : 'asc';
