@@ -24,6 +24,10 @@ export function TimelineColumn({ years, yearToRowMap }: TimelineColumnProps) {
       {/* 年リスト */}
       {years.map((year) => {
         const rowIndex = yearToRowMap.get(year);
+        if (rowIndex === undefined) {
+          console.warn(`Year ${year} not found in yearToRowMap`);
+          return null;
+        }
         return (
           <div
             key={year}

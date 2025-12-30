@@ -27,11 +27,15 @@ export function TagColumn({ column, colIndex, yearToRowMap }: TagColumnProps) {
       {/* イベントリスト */}
       {column.events.map((event) => {
         const rowIndex = yearToRowMap.get(event.date.year);
+        if (rowIndex === undefined) {
+          console.warn(`Year ${event.date.year} not found in timeline for event ${event.id}`);
+          return null;
+        }
         return (
           <div
             key={event.id}
             style={{ gridRow: rowIndex, gridColumn: colIndex + 2 }}
-            className="p-4 border-r border-b bg-white hover:bg-gray-50 cursor-pointer"
+            className="p-4 border-r border-b bg-white"
           >
             <div className="text-sm text-gray-600">
               {event.date.month && event.date.day
