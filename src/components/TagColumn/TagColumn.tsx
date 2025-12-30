@@ -5,6 +5,7 @@
  * 特定のタグを持つイベントを年ごとに配置する
  */
 
+import { EventCard } from '../EventCard/EventCard';
 import type { Column } from '@/lib/utils/types';
 
 interface TagColumnProps {
@@ -35,17 +36,8 @@ export function TagColumn({ column, colIndex, yearToRowMap }: TagColumnProps) {
           <div
             key={event.id}
             style={{ gridRow: rowIndex, gridColumn: colIndex + 2 }}
-            className="p-4 border-r border-b bg-white"
           >
-            <div className="text-sm text-gray-600">
-              {event.date.month && event.date.day
-                ? `${event.date.year}-${String(event.date.month).padStart(2, '0')}-${String(event.date.day).padStart(2, '0')}`
-                : event.date.year}
-            </div>
-            <div className="font-medium text-gray-900">{event.title}</div>
-            <div className="text-xs text-gray-500 mt-1">
-              {event.tags.map((tag) => `#${tag}`).join(' ')}
-            </div>
+            <EventCard event={event} highlightTag={column.tag} />
           </div>
         );
       })}
