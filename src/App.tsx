@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useTags } from './hooks/useTags';
 import { useColumns } from './hooks/useColumns';
 import { TagSelector } from './components/TagSelector/TagSelector';
+import { MultiColumnView } from './components/MultiColumnView/MultiColumnView';
+import { extractTimelineYears } from './lib/utils';
 
 function App() {
   // タグ一覧を取得
@@ -15,6 +17,9 @@ function App() {
 
   // カラムデータを取得
   const { columns, loading: columnsLoading } = useColumns(selectedTags, sortOrder);
+
+  // Timeline用の年リストを生成
+  const timelineYears = extractTimelineYears(columns, sortOrder);
 
   // タグ選択ハンドラー
   const handleSelectTag = (tag: string) => {
@@ -50,25 +55,21 @@ function App() {
           error={tagsError}
         />
 
-        {/* カラムデータの表示（Step 2以降で実装） */}
+        {/* マルチカラムビュー（Step 2） */}
         {selectedTags.length > 0 && (
-          <div className="bg-white p-4 rounded-lg shadow">
-            <h2 className="text-lg font-semibold mb-4">選択中のカラム</h2>
+          <>
             {columnsLoading ? (
-              <p className="text-gray-600">カラムデータを読み込み中...</p>
-            ) : (
-              <div className="space-y-2">
-                {columns.map((column) => (
-                  <div key={column.tag} className="border-l-4 border-blue-500 pl-3">
-                    <h3 className="font-medium text-gray-900">#{column.tag}</h3>
-                    <p className="text-sm text-gray-600">
-                      {column.events.length} 件のイベント
-                    </p>
-                  </div>
-                ))}
+              <div className="bg-white p-8 rounded-lg shadow text-center">
+                <p className="text-gray-600">カラムデータを読み込み中...</p>
               </div>
+            ) : (
+              <MultiColumnView
+                timelineYears={timelineYears}
+                columns={columns}
+                sortOrder={sortOrder}
+              />
             )}
-          </div>
+          </>
         )}
       </main>
     </div>
