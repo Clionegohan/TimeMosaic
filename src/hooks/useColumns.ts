@@ -4,7 +4,7 @@
  * カラムデータを取得するカスタムフック
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import type { Column } from '@/lib/utils/types';
 
 interface ColumnsMetadata {
@@ -59,7 +59,7 @@ export function useColumns(
     setError(null);
 
     try {
-      const tagsParam = tags.join(',');
+      const tagsParam = tags.map(encodeURIComponent).join(',');
       const response = await fetch(`/api/columns?tags=${tagsParam}&order=${order}`);
 
       if (!response.ok) {
@@ -76,8 +76,8 @@ export function useColumns(
     }
   }, []);
 
-  // 配列を文字列に変換して比較
-  const tagsKey = selectedTags.join(',');
+  // 配列をJSON文字列に変換して比較（より安全）
+  const tagsKey = useMemo(() => JSON.stringify(selectedTags), [selectedTags]);
 
   useEffect(() => {
     fetchColumns();

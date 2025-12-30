@@ -91,7 +91,9 @@ describe('useColumns', () => {
     renderHook(() => useColumns(['歴史', '日本'], 'desc'));
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/columns?tags=歴史,日本&order=desc');
+      expect(fetch).toHaveBeenCalledWith(
+        '/api/columns?tags=%E6%AD%B4%E5%8F%B2,%E6%97%A5%E6%9C%AC&order=desc'
+      );
     });
   });
 
@@ -256,7 +258,7 @@ describe('useColumns', () => {
     rerender({ tags: ['歴史'], order: 'desc' as const });
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/columns?tags=歴史&order=desc');
+      expect(fetch).toHaveBeenCalledWith('/api/columns?tags=%E6%AD%B4%E5%8F%B2&order=desc');
     });
 
     expect(fetch).toHaveBeenCalledTimes(2);

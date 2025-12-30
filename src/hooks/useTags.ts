@@ -18,7 +18,7 @@ interface UseTagsReturn {
  */
 export function useTags(): UseTagsReturn {
   const [tags, setTags] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchTags = async () => {

@@ -21,7 +21,7 @@ interface UseEventsReturn {
 export function useEvents(): UseEventsReturn {
   const [events, setEvents] = useState<Event[]>([]);
   const [errors, setErrors] = useState<ParseError[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchEvents = async () => {
