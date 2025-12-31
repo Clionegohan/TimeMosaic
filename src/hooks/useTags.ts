@@ -4,7 +4,8 @@
  * タグ一覧を取得するカスタムフック
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useFileWatcher } from './useFileWatcher';
 
 interface UseTagsReturn {
   tags: string[];
@@ -21,7 +22,7 @@ export function useTags(): UseTagsReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchTags = async () => {
+  const fetchTags = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -39,11 +40,14 @@ export function useTags(): UseTagsReturn {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchTags();
-  }, []);
+  }, [fetchTags]);
+
+  // ファイル変更時に自動再取得
+  useFileWatcher(fetchTags);
 
   return {
     tags,

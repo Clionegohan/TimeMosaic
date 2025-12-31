@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import type { Column } from '@/lib/utils/types';
+import { useFileWatcher } from './useFileWatcher';
 
 interface ColumnsMetadata {
   selectedTags: string[];
@@ -83,6 +84,9 @@ export function useColumns(
     fetchColumns();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tagsKey, sortOrder]);
+
+  // ファイル変更時に自動再取得
+  useFileWatcher(fetchColumns);
 
   return {
     columns,
