@@ -36,7 +36,7 @@ class MockWebSocket {
 
 // グローバルにWebSocketをモック
 beforeAll(() => {
-  global.WebSocket = MockWebSocket as any;
+  (global as any).WebSocket = MockWebSocket;
 });
 
 // 各テストの後にDOMをクリーンアップ
