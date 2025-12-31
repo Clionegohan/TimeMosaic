@@ -19,4 +19,9 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
     },
   },
+  define: {
+    'import.meta.env.PROD': false,
+    'import.meta.env.DEV': true,
+    'import.meta.hot': undefined,
+  },
 });
