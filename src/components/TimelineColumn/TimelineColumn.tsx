@@ -1,44 +1,52 @@
 /**
  * TimelineColumn
  *
- * Timeline列を表示するコンポーネント
- * 全イベントの年リストを縦に表示し、年間の時間的関係を可視化する
+ * Timeline列を一本の縦線として表示するコンポーネント
+ * イベントがある年だけをマーカーとして配置し、年間隔を実際の年数に比例させる
  */
 
 interface TimelineColumnProps {
   years: number[];
-  yearToRowMap: Map<number, number>;
+  yearPositions: number[]; // 各年のtop位置（px）
 }
 
-export function TimelineColumn({ years, yearToRowMap }: TimelineColumnProps) {
+export function TimelineColumn({ years, yearPositions }: TimelineColumnProps) {
   return (
-    <>
+    <div className="relative border-r bg-gray-50" style={{ width: '120px' }}>
       {/* ヘッダー */}
-      <div
-        style={{ gridRow: 1, gridColumn: 1 }}
-        className="p-4 font-semibold text-gray-700 border-r border-b bg-gray-50"
-      >
+      <div className="p-4 font-semibold text-gray-700 border-b bg-gray-50 sticky top-0 z-10">
         Timeline
       </div>
 
-      {/* 年リスト */}
-      {years.map((year) => {
-        const rowIndex = yearToRowMap.get(year);
-        if (rowIndex === undefined) {
-          console.warn(`Year ${year} not found in yearToRowMap`);
-          return null;
-        }
+      {/* 縦線 */}
+      <div
+        className="absolute left-1/2 border-l-2 border-gray-300"
+        style={{
+          top: '60px',
+          bottom: '0',
+          transform: 'translateX(-50%)',
+        }}
+      />
+
+      {/* 年マーカー */}
+      {years.map((year, index) => {
+        const topPosition = yearPositions[index];
         return (
           <div
             key={year}
-            style={{ gridRow: rowIndex, gridColumn: 1 }}
-            className="p-4 border-r border-b text-center"
+            className="absolute left-0 right-0 flex items-center justify-center"
+            style={{ top: `${topPosition}px` }}
           >
-            <div className="font-bold text-gray-800">{year}</div>
-            <div className="text-gray-400 text-2xl">│</div>
+            {/* 年ラベル */}
+            <div className="relative z-10 bg-white border-2 border-gray-300 rounded-full px-3 py-1 font-bold text-gray-800 text-sm">
+              {year}
+            </div>
+
+            {/* 水平線（タイムラインからイベントへ） */}
+            <div className="absolute left-full w-4 border-t-2 border-gray-300" />
           </div>
         );
       })}
-    </>
+    </div>
   );
 }
