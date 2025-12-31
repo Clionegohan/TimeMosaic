@@ -18,10 +18,13 @@ let fileWatcher: FSWatcher | null = null;
  * GET /api/events エンドポイント: 全イベントを返す
  * GET /api/tags エンドポイント: 全タグ一覧を返す
  * GET /api/columns エンドポイント: タグで絞り込んだカラムデータを返す
+ *
+ * @param eventsFilePath - イベントファイルのパス（省略時は sample/events.md）
  */
-export function eventsApiPlugin(): Plugin {
-  // サンプルファイルのパス（プロジェクトルートからの相対パス）
-  const sampleFilePath = path.resolve(process.cwd(), 'sample/events.md');
+export function eventsApiPlugin(eventsFilePath?: string): Plugin {
+  // イベントファイルのパス
+  // 引数で渡されたパスを使用、未設定時はデフォルトパスを使用
+  const sampleFilePath = eventsFilePath || path.resolve(process.cwd(), 'sample/events.md');
 
   return {
     name: 'timemosaic-events-api',
