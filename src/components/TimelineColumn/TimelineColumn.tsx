@@ -8,9 +8,10 @@
 interface TimelineColumnProps {
   years: number[];
   yearPositions: number[]; // 各年のtop位置（px）
+  centuryMarkers?: Array<{ year: number; position: number }>; // 100年区切りマーカー
 }
 
-export function TimelineColumn({ years, yearPositions }: TimelineColumnProps) {
+export function TimelineColumn({ years, yearPositions, centuryMarkers = [] }: TimelineColumnProps) {
   return (
     <div className="relative border-r bg-gray-50" style={{ width: '120px' }}>
       {/* ヘッダー */}
@@ -28,7 +29,21 @@ export function TimelineColumn({ years, yearPositions }: TimelineColumnProps) {
         }}
       />
 
-      {/* 年マーカー */}
+      {/* 100年区切りマーカー */}
+      {centuryMarkers.map((marker) => (
+        <div
+          key={`century-${marker.year}`}
+          className="absolute left-0 right-0 flex items-center justify-center"
+          style={{ top: `${marker.position}px` }}
+        >
+          {/* 100年区切りラベル（目立つデザイン） */}
+          <div className="relative z-10 bg-blue-600 text-white border-2 border-blue-700 rounded px-4 py-1.5 font-bold text-base shadow-lg">
+            {marker.year}
+          </div>
+        </div>
+      ))}
+
+      {/* イベント年マーカー */}
       {years.map((year, index) => {
         const topPosition = yearPositions[index];
         return (

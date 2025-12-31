@@ -8,7 +8,11 @@
 import { useMemo } from 'react';
 import { TimelineColumn } from '../TimelineColumn/TimelineColumn';
 import { TagColumn } from '../TagColumn/TagColumn';
-import { calculateYearPositions, createYearPositionMap } from '@/lib/utils/timeline';
+import {
+  calculateYearPositions,
+  createYearPositionMap,
+  calculateCenturyMarkers,
+} from '@/lib/utils/timeline';
 import type { Column } from '@/lib/utils/types';
 
 interface MultiColumnViewProps {
@@ -28,6 +32,11 @@ export function MultiColumnView({ timelineYears, columns }: MultiColumnViewProps
     return createYearPositionMap(timelineYears, yearPositions);
   }, [timelineYears, yearPositions]);
 
+  // 100年区切りマーカーを計算
+  const centuryMarkers = useMemo(() => {
+    return calculateCenturyMarkers(timelineYears, yearPositionMap);
+  }, [timelineYears, yearPositionMap]);
+
   // コンテナの最小高さを計算（最後の年の位置 + バッファ）
   const containerMinHeight = useMemo(() => {
     if (yearPositions.length === 0) return '100vh';
@@ -44,7 +53,11 @@ export function MultiColumnView({ timelineYears, columns }: MultiColumnViewProps
         }}
       >
         {/* Timeline列 */}
-        <TimelineColumn years={timelineYears} yearPositions={yearPositions} />
+        <TimelineColumn
+          years={timelineYears}
+          yearPositions={yearPositions}
+          centuryMarkers={centuryMarkers}
+        />
 
         {/* タグ列 */}
         {columns.map((column) => (

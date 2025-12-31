@@ -72,3 +72,100 @@ export function createYearPositionMap(
 
   return map;
 }
+
+/**
+ * 100年区切りの年とその位置を計算する
+ *
+ * @param years - イベントがある年のリスト
+ * @param yearPositionMap - 年→位置のマップ
+ * @returns 100年区切りの年とその位置の配列
+ *
+ * @example
+ * // イベント年: [1965, 1984, 2020]
+ * // 100年区切り: 1900, 2000
+ * calculateCenturyMarkers([1965, 1984, 2020], map)
+ * // => [{ year: 1900, position: 50 }, { year: 2000, position: 450 }]
+ */
+export function calculateCenturyMarkers(
+  years: number[],
+  yearPositionMap: Map<number, number>
+): Array<{ year: number; position: number }> {
+  if (years.length === 0) return [];
+
+  const minYear = Math.min(...years);
+  const maxYear = Math.max(...years);
+
+  // 最小年以下の最大の100の倍数
+  const startCentury = Math.floor(minYear / 100) * 100;
+  // 最大年以上の最小の100の倍数
+  const endCentury = Math.ceil(maxYear / 100) * 100;
+
+  const centuryMarkers: Array<{ year: number; position: number }> = [];
+
+  for (let century = startCentury; century <= endCentury; century += 100) {
+    // この100年区切りの位置を計算
+    // イベント年の間に挟まれている場合は補間、範囲外の場合は外挿
+    const position = interpolateYearPosition(century, years, yearPositionMap);
+    centuryMarkers.push({ year: century, position });
+  }
+
+  return centuryMarkers;
+}
+
+/**
+ * 年の位置を補間/外挿する
+ *
+ * @param targetYear - 位置を求めたい年
+ * @param years - イベントがある年のリスト（ソート済み）
+ * @param yearPositionMap - 年→位置のマップ
+ * @returns 補間/外挿された位置（px）
+ */
+function interpolateYearPosition(
+  targetYear: number,
+  years: number[],
+  yearPositionMap: Map<number, number>
+): number {
+  // イベント年リストに含まれている場合
+  const exactPosition = yearPositionMap.get(targetYear);
+  if (exactPosition !== undefined) {
+    return exactPosition;
+  }
+
+  // targetYearがイベント年の範囲外の場合
+  const minYear = Math.min(...years);
+  const maxYear = Math.max(...years);
+
+  if (targetYear < minYear) {
+    // 最小年より前 → 外挿
+    const firstYear = years[0];
+    const firstPosition = yearPositionMap.get(firstYear)!;
+    const yearDiff = firstYear - targetYear;
+    return firstPosition - yearDiff * PIXELS_PER_YEAR;
+  }
+
+  if (targetYear > maxYear) {
+    // 最大年より後 → 外挿
+    const lastYear = years[years.length - 1];
+    const lastPosition = yearPositionMap.get(lastYear)!;
+    const yearDiff = targetYear - lastYear;
+    return lastPosition + yearDiff * PIXELS_PER_YEAR;
+  }
+
+  // targetYearが2つのイベント年の間にある場合 → 線形補間
+  for (let i = 0; i < years.length - 1; i++) {
+    const year1 = years[i];
+    const year2 = years[i + 1];
+
+    if (year1 <= targetYear && targetYear <= year2) {
+      const pos1 = yearPositionMap.get(year1)!;
+      const pos2 = yearPositionMap.get(year2)!;
+
+      // 線形補間
+      const ratio = (targetYear - year1) / (year2 - year1);
+      return pos1 + ratio * (pos2 - pos1);
+    }
+  }
+
+  // フォールバック（通常ここには来ない）
+  return yearPositionMap.get(years[0])!;
+}
