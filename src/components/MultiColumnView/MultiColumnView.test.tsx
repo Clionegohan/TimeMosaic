@@ -88,7 +88,7 @@ describe('MultiColumnView', () => {
     })).toBeInTheDocument();
   });
 
-  it('CSS Gridのカラム数が正しく設定される', () => {
+  it('Timeline列とタグ列が横並びに表示される', () => {
     const timelineYears = [1543];
     const columns: Column[] = [{ tag: '歴史', events: [] }, { tag: '日本', events: [] }];
 
@@ -96,7 +96,13 @@ describe('MultiColumnView', () => {
       <MultiColumnView timelineYears={timelineYears} columns={columns} sortOrder="asc" />
     );
 
-    const grid = container.querySelector('.grid');
-    expect(grid).toHaveStyle({ gridTemplateColumns: '120px repeat(2, 300px)' });
+    // Flexレイアウトコンテナが存在すること
+    const flexContainer = container.querySelector('.flex');
+    expect(flexContainer).toBeInTheDocument();
+
+    // Timeline列とタグ列が存在すること
+    expect(screen.getByText('Timeline')).toBeInTheDocument();
+    expect(screen.getByText('#歴史')).toBeInTheDocument();
+    expect(screen.getByText('#日本')).toBeInTheDocument();
   });
 });
