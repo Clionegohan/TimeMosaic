@@ -6,7 +6,7 @@
  */
 
 import chokidar, { type FSWatcher } from 'chokidar';
-import type { WebSocketServer } from 'ws';
+import WebSocket, { type WebSocketServer } from 'ws';
 
 export interface FileWatcherOptions {
   filePath: string;
@@ -43,7 +43,11 @@ export function setupFileWatcher(
 
     // カスタムコールバック実行
     if (onFileChange) {
-      onFileChange(path);
+      try {
+        onFileChange(path);
+      } catch (error) {
+        console.error(`[FileWatcher] Callback error:`, error);
+      }
     }
 
     // WebSocketクライアントに通知
@@ -75,8 +79,7 @@ function broadcastFileChange(wss: WebSocketServer, path: string): void {
   let clientCount = 0;
 
   wss.clients.forEach((client) => {
-    if (client.readyState === 1) {
-      // WebSocket.OPEN
+    if (client.readyState === WebSocket.OPEN) {
       client.send(message);
       clientCount++;
     }
