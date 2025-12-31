@@ -5,8 +5,39 @@
  */
 
 import { cleanup } from '@testing-library/react';
-import { afterEach } from 'vitest';
+import { afterEach, beforeAll } from 'vitest';
 import '@testing-library/jest-dom/vitest';
+
+// WebSocketのグローバルモック
+class MockWebSocket {
+  onopen: (() => void) | null = null;
+  onmessage: ((event: MessageEvent) => void) | null = null;
+  onerror: ((error: Event) => void) | null = null;
+  onclose: (() => void) | null = null;
+  readyState: number = 0;
+
+  constructor(public url: string) {
+    // すぐに接続成功をシミュレート
+    setTimeout(() => {
+      this.readyState = 1; // WebSocket.OPEN
+      if (this.onopen) this.onopen();
+    }, 0);
+  }
+
+  send(_data: string) {
+    // モックなので何もしない
+  }
+
+  close() {
+    this.readyState = 3; // WebSocket.CLOSED
+    if (this.onclose) this.onclose();
+  }
+}
+
+// グローバルにWebSocketをモック
+beforeAll(() => {
+  global.WebSocket = MockWebSocket as any;
+});
 
 // 各テストの後にDOMをクリーンアップ
 afterEach(() => {
