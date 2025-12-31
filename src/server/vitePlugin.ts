@@ -6,12 +6,10 @@
 
 import type { Plugin, ViteDevServer } from 'vite';
 import path from 'node:path';
-import { WebSocketServer } from 'ws';
 import type { FSWatcher } from 'chokidar';
 import { getEvents, getTags, getColumns } from './apiHandlers';
 import { setupFileWatcher } from './watcher/fileWatcher';
 
-let wss: WebSocketServer | null = null;
 let fileWatcher: FSWatcher | null = null;
 
 /**
@@ -28,9 +26,9 @@ export function eventsApiPlugin(): Plugin {
   return {
     name: 'timemosaic-events-api',
     configureServer(server) {
-      // WebSocketサーバーとファイル監視を起動（開発モードのみ）
+      // ファイル監視を起動（開発モードのみ）
       if (process.env.NODE_ENV !== 'production') {
-        setupWebSocketAndFileWatcher(server, sampleFilePath);
+        setupFileWatching(server, sampleFilePath);
       }
 
       server.middlewares.use(async (req, res, next) => {
@@ -152,42 +150,31 @@ export function eventsApiPlugin(): Plugin {
         fileWatcher.close();
         fileWatcher = null;
       }
-
-      if (wss) {
-        console.log('[VitePlugin] Closing WebSocket server...');
-        wss.close();
-        wss = null;
-      }
     },
   };
 }
 
 /**
- * WebSocketサーバーとファイル監視を起動
+ * ファイル監視を起動し、ViteのHMR WebSocketで通知
  */
-function setupWebSocketAndFileWatcher(server: ViteDevServer, filePath: string): void {
-  // WebSocketサーバーを作成（Vite HTTPサーバーを利用）
-  wss = new WebSocketServer({ server: server.httpServer as any });
+function setupFileWatching(server: ViteDevServer, filePath: string): void {
+  // ファイル監視を開始
+  fileWatcher = setupFileWatcher({
+    filePath,
+    onFileChange: (path) => {
+      console.log(`[VitePlugin] Notifying clients about file change: ${path}`);
 
-  wss.on('connection', (ws) => {
-    console.log('[WebSocket] Client connected');
-
-    ws.on('close', () => {
-      console.log('[WebSocket] Client disconnected');
-    });
-
-    ws.on('error', (error) => {
-      console.error('[WebSocket] Error:', error);
-    });
+      // ViteのHMR WebSocketを使用してカスタムイベントを送信
+      server.ws.send({
+        type: 'custom',
+        event: 'timemosaic:file-changed',
+        data: {
+          path,
+          timestamp: Date.now(),
+        },
+      });
+    },
   });
 
-  // ファイル監視を開始
-  fileWatcher = setupFileWatcher(
-    {
-      filePath,
-    },
-    wss
-  );
-
-  console.log('[VitePlugin] WebSocket server and file watcher started');
+  console.log('[VitePlugin] File watcher started (using Vite HMR WebSocket)');
 }
