@@ -47,7 +47,7 @@ describe('MultiColumnView', () => {
       },
     ];
 
-    render(<MultiColumnView timelineYears={timelineYears} columns={columns} sortOrder="asc" />);
+    render(<MultiColumnView timelineYears={timelineYears} columns={columns} />);
 
     // Timeline列のヘッダー
     expect(screen.getByText('Timeline')).toBeInTheDocument();
@@ -58,9 +58,11 @@ describe('MultiColumnView', () => {
     expect(screen.getAllByText('1964').length).toBeGreaterThan(0);
 
     // タグ列のヘッダー (完全一致)
-    expect(screen.getByText((content, element) => {
-      return element?.textContent === '#歴史' && element.classList.contains('bg-blue-50');
-    })).toBeInTheDocument();
+    expect(
+      screen.getByText((_content, element) => {
+        return element?.textContent === '#歴史' && element.classList.contains('sticky');
+      })
+    ).toBeInTheDocument();
 
     // イベントが表示される
     expect(screen.getByText('鉄砲伝来')).toBeInTheDocument();
@@ -74,27 +76,31 @@ describe('MultiColumnView', () => {
       { tag: 'スポーツ', events: [mockEvent3] },
     ];
 
-    render(<MultiColumnView timelineYears={timelineYears} columns={columns} sortOrder="asc" />);
+    render(<MultiColumnView timelineYears={timelineYears} columns={columns} />);
 
-    // タグ列のヘッダーが表示される (bg-blue-50クラスで識別)
-    expect(screen.getByText((content, element) => {
-      return element?.textContent === '#歴史' && element.classList.contains('bg-blue-50');
-    })).toBeInTheDocument();
-    expect(screen.getByText((content, element) => {
-      return element?.textContent === '#日本' && element.classList.contains('bg-blue-50');
-    })).toBeInTheDocument();
-    expect(screen.getByText((content, element) => {
-      return element?.textContent === '#スポーツ' && element.classList.contains('bg-blue-50');
-    })).toBeInTheDocument();
+    // タグ列のヘッダーが表示される (stickyクラスで識別)
+    expect(
+      screen.getByText((_unusedContent, element) => {
+        return element?.textContent === '#歴史' && element.classList.contains('sticky');
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText((_unusedContent, element) => {
+        return element?.textContent === '#日本' && element.classList.contains('sticky');
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText((_unusedContent, element) => {
+        return element?.textContent === '#スポーツ' && element.classList.contains('sticky');
+      })
+    ).toBeInTheDocument();
   });
 
   it('Timeline列とタグ列が横並びに表示される', () => {
     const timelineYears = [1543];
     const columns: Column[] = [{ tag: '歴史', events: [] }, { tag: '日本', events: [] }];
 
-    const { container } = render(
-      <MultiColumnView timelineYears={timelineYears} columns={columns} sortOrder="asc" />
-    );
+    const { container } = render(<MultiColumnView timelineYears={timelineYears} columns={columns} />);
 
     // Flexレイアウトコンテナが存在すること
     const flexContainer = container.querySelector('.flex');

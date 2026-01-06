@@ -22,23 +22,19 @@ export function EventCard({ event, highlightTag }: EventCardProps) {
     <>
       <div
         onClick={() => setShowModal(true)}
-        className="p-4 border-r border-b bg-white hover:bg-gray-50 cursor-pointer"
+        className="group cursor-pointer rounded-xl border border-black/10 bg-[var(--tm-paper)] px-4 py-3 shadow-[0_1px_0_rgba(0,0,0,0.04)] hover:bg-stone-50"
       >
-        {/* 日付 */}
-        <div className="text-sm text-gray-600">{formatDate(event.date)}</div>
+        <div className="text-xs text-stone-600">{formatDate(event.date)}</div>
+        <div className="mt-1 font-medium text-stone-900 leading-snug">{event.title}</div>
 
-        {/* タイトル */}
-        <div className="font-medium text-gray-900 mt-1">{event.title}</div>
-
-        {/* タグ */}
-        <div className="flex flex-wrap gap-1 mt-2">
+        <div className="mt-2 flex flex-wrap gap-1">
           {event.tags.map((tag) => (
             <span
               key={tag}
               className={
                 tag === highlightTag
-                  ? 'px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-700 font-semibold'
-                  : 'px-2 py-0.5 text-xs rounded bg-gray-100 text-gray-600'
+                  ? 'px-2 py-0.5 text-xs rounded-full bg-black/5 text-stone-800 border border-black/5'
+                  : 'px-2 py-0.5 text-xs rounded-full bg-black/3 text-stone-700 border border-black/5'
               }
             >
               #{tag}
@@ -46,19 +42,14 @@ export function EventCard({ event, highlightTag }: EventCardProps) {
           ))}
         </div>
 
-        {/* 説明文（最初の50文字） */}
         {event.description && (
-          <div className="text-xs text-gray-500 mt-2">
-            {event.description.substring(0, 50)}
-            {event.description.length > 50 && '...'}
+          <div className="mt-2 text-xs text-stone-600 truncate" title={event.description}>
+            {event.description}
           </div>
         )}
       </div>
 
-      {/* モーダル */}
-      {showModal && (
-        <EventDetailModal event={event} onClose={() => setShowModal(false)} />
-      )}
+      {showModal && <EventDetailModal event={event} onClose={() => setShowModal(false)} />}
     </>
   );
 }

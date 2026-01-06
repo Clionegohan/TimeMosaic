@@ -21,15 +21,12 @@ export function createColumns(
   sortOrder: 'asc' | 'desc' = 'asc'
 ): Column[] {
   return selectedTags.map((tag) => {
-    // タグでフィルタリング
     const filteredEvents = filterEventsByTag(events, tag);
-
-    // ソート
-    const sortedEvents = sortEventsByDate(filteredEvents, sortOrder);
 
     return {
       tag,
-      events: sortedEvents,
+      events: sortEventsByDate(filteredEvents, sortOrder),
     };
   });
 }
+

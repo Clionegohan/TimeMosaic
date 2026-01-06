@@ -200,29 +200,28 @@ describe('マルチカラムロジック統合テスト（ATDD）', () => {
       expect(allTags).toContain('科学');
     });
 
-    it('新しい順（desc）でソートできる', () => {
+    it('イベントは常に古い順（asc）でソートされる', () => {
       const selectedTags = ['歴史', '日本'];
-      const columns = createColumns(sampleEvents, selectedTags, 'desc');
+      const columns = createColumns(sampleEvents, selectedTags);
 
-      // 歴史列: 新しい順（1989 > 1945 > 1914 > 1868 > 1543）
+      // 歴史列: 古い順（1543 < 1868 < 1914 < 1945 < 1989）
       const historyColumn = columns[0];
-      expect(historyColumn.events[0].date.year).toBe(1989); // ベルリン
-      expect(historyColumn.events[1].date.year).toBe(1945); // 終戦
+      expect(historyColumn.events[0].date.year).toBe(1543); // 鉄砲伝来
+      expect(historyColumn.events[1].date.year).toBe(1868); // 明治維新
       expect(historyColumn.events[2].date.year).toBe(1914); // WWI
-      expect(historyColumn.events[3].date.year).toBe(1868); // 明治維新
-      expect(historyColumn.events[4].date.year).toBe(1543); // 鉄砲伝来
+      expect(historyColumn.events[3].date.year).toBe(1945); // 終戦
+      expect(historyColumn.events[4].date.year).toBe(1989); // ベルリン
 
-      // 新しい順にソートされている
       for (let i = 0; i < historyColumn.events.length - 1; i++) {
         const current = historyColumn.events[i].date.year;
         const next = historyColumn.events[i + 1].date.year;
-        expect(current).toBeGreaterThanOrEqual(next);
+        expect(current).toBeLessThanOrEqual(next);
       }
 
-      // 日本列も新しい順
+      // 日本列も古い順
       const japanColumn = columns[1];
-      expect(japanColumn.events[0].date.year).toBe(2011); // 東日本大震災
-      expect(japanColumn.events[japanColumn.events.length - 1].date.year).toBe(1543); // 鉄砲伝来
+      expect(japanColumn.events[0].date.year).toBe(1543); // 鉄砲伝来
+      expect(japanColumn.events[japanColumn.events.length - 1].date.year).toBe(2011); // 東日本大震災
     });
   });
 

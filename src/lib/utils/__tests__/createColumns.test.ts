@@ -15,7 +15,7 @@ describe('createColumns', () => {
         { id: '3', date: { year: 1914 }, title: '第一次世界大戦', tags: ['歴史', '戦争'], raw: '' },
       ];
 
-      const columns = createColumns(events, ['歴史', '日本'], 'asc');
+      const columns = createColumns(events, ['歴史', '日本']);
 
       expect(columns).toHaveLength(2);
       expect(columns[0].tag).toBe('歴史');
@@ -29,7 +29,7 @@ describe('createColumns', () => {
         { id: '3', date: { year: 1914 }, title: '第一次世界大戦', tags: ['歴史', '戦争'], raw: '' },
       ];
 
-      const columns = createColumns(events, ['歴史', '日本'], 'asc');
+      const columns = createColumns(events, ['歴史', '日本']);
 
       // 歴史列には2つのイベント
       expect(columns[0].events).toHaveLength(2);
@@ -194,7 +194,7 @@ describe('createColumns', () => {
         { id: '5', date: { year: 1964 }, title: '東京オリンピック', tags: ['スポーツ', '日本'], raw: '' },
       ];
 
-      const columns = createColumns(events, ['歴史', '日本'], 'asc');
+      const columns = createColumns(events, ['歴史', '日本']);
 
       // 歴史列: 鉄砲伝来、明治維新、終戦記念日
       expect(columns[0].tag).toBe('歴史');

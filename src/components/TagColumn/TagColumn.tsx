@@ -15,9 +15,9 @@ interface TagColumnProps {
 
 export function TagColumn({ column, yearPositionMap }: TagColumnProps) {
   return (
-    <div className="relative border-r bg-white" style={{ width: '300px', minHeight: '100vh' }}>
+    <div className="relative border-r border-black/10 bg-[var(--tm-paper)]" style={{ width: '300px', minHeight: '100vh' }}>
       {/* ヘッダー */}
-      <div className="p-4 font-semibold text-blue-600 border-b bg-blue-50 sticky top-0 z-10">
+      <div className="p-4 font-semibold text-stone-800 border-b border-black/10 bg-[var(--tm-paper)] sticky top-0 z-10">
         #{column.tag}
       </div>
 

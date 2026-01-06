@@ -79,16 +79,18 @@ export async function getTags(filePath: string): Promise<TagsResponse> {
 export async function getColumns(
   filePath: string,
   selectedTags: string[],
-  sortOrder: 'asc' | 'desc'
+  sortOrder: unknown = 'asc'
 ): Promise<ColumnsResponse> {
   const result = await readEventsFromFile(filePath);
-  const columns = createColumns(result.events, selectedTags, sortOrder);
+
+  const normalizedSortOrder: 'asc' | 'desc' = sortOrder === 'desc' ? 'desc' : 'asc';
+  const columns = createColumns(result.events, selectedTags, normalizedSortOrder);
 
   return {
     columns,
     metadata: {
       selectedTags,
-      sortOrder,
+      sortOrder: normalizedSortOrder,
       totalEvents: result.events.length,
     },
   };

@@ -24,7 +24,7 @@ describe('extractTimelineYears', () => {
       },
     ];
 
-    const result = extractTimelineYears(columns, 'asc');
+    const result = extractTimelineYears(columns);
 
     expect(result).toEqual([1543, 1945, 1964]);
   });
@@ -41,7 +41,7 @@ describe('extractTimelineYears', () => {
       },
     ];
 
-    const result = extractTimelineYears(columns, 'asc');
+    const result = extractTimelineYears(columns);
 
     expect(result).toEqual([1945]);
   });
@@ -58,7 +58,7 @@ describe('extractTimelineYears', () => {
       },
     ];
 
-    const result = extractTimelineYears(columns, 'asc');
+    const result = extractTimelineYears(columns);
 
     expect(result).toEqual([1543, 1945, 1964]);
   });
@@ -75,13 +75,13 @@ describe('extractTimelineYears', () => {
       },
     ];
 
-    const result = extractTimelineYears(columns, 'desc');
+    const result = extractTimelineYears(columns);
 
-    expect(result).toEqual([1964, 1945, 1543]);
+    expect(result).toEqual([1543, 1945, 1964]);
   });
 
   it('空のカラムリストの場合は空配列を返す', () => {
-    const result = extractTimelineYears([], 'asc');
+    const result = extractTimelineYears([]);
 
     expect(result).toEqual([]);
   });

@@ -13,15 +13,15 @@ interface TimelineColumnProps {
 
 export function TimelineColumn({ years, yearPositions, centuryMarkers = [] }: TimelineColumnProps) {
   return (
-    <div className="relative border-r bg-gray-50" style={{ width: '120px' }}>
+    <div className="relative border-r border-black/10 bg-[var(--tm-paper)]" style={{ width: '120px' }}>
       {/* ヘッダー */}
-      <div className="p-4 font-semibold text-gray-700 border-b bg-gray-50 sticky top-0 z-10">
+      <div className="p-4 font-semibold text-stone-700 border-b border-black/10 bg-[var(--tm-paper)] sticky top-0 z-10">
         Timeline
       </div>
 
       {/* 縦線 */}
       <div
-        className="absolute left-1/2 border-l-2 border-gray-300"
+        className="absolute left-1/2 border-l-2 border-black/15"
         style={{
           top: '60px',
           bottom: '0',
@@ -37,7 +37,7 @@ export function TimelineColumn({ years, yearPositions, centuryMarkers = [] }: Ti
           style={{ top: `${marker.position}px` }}
         >
           {/* 100年区切りラベル（目立つデザイン） */}
-          <div className="relative z-10 bg-blue-600 text-white border-2 border-blue-700 rounded px-4 py-1.5 font-bold text-base shadow-lg">
+          <div className="relative z-10 bg-stone-900 text-[var(--tm-paper)] border border-black/20 rounded-xl px-4 py-1.5 font-semibold text-base shadow-[0_2px_10px_rgba(0,0,0,0.10)]">
             {marker.year}
           </div>
         </div>
@@ -53,12 +53,12 @@ export function TimelineColumn({ years, yearPositions, centuryMarkers = [] }: Ti
             style={{ top: `${topPosition}px` }}
           >
             {/* 年ラベル */}
-            <div className="relative z-10 bg-white border-2 border-gray-300 rounded-full px-3 py-1 font-bold text-gray-800 text-sm">
+            <div className="relative z-10 bg-[var(--tm-paper)] border border-black/15 rounded-full px-3 py-1 font-semibold text-stone-800 text-sm">
               {year}
             </div>
 
             {/* 水平線（タイムラインからイベントへ） */}
-            <div className="absolute left-full w-4 border-t-2 border-gray-300" />
+            <div className="absolute left-full w-4 border-t-2 border-black/15" />
           </div>
         );
       })}

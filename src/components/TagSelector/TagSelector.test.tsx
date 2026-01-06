@@ -16,8 +16,8 @@ describe('TagSelector', () => {
       <TagSelector
         allTags={mockTags}
         selectedTags={[]}
-        onSelectTag={vi.fn()}
-        onRemoveTag={vi.fn()}
+        onSelectTag={vi.fn() as unknown as (tag: string) => void}
+        onRemoveTag={vi.fn() as unknown as (tag: string) => void}
       />
     );
 
@@ -31,8 +31,8 @@ describe('TagSelector', () => {
       <TagSelector
         allTags={mockTags}
         selectedTags={['歴史', '日本']}
-        onSelectTag={vi.fn()}
-        onRemoveTag={vi.fn()}
+        onSelectTag={vi.fn() as unknown as (tag: string) => void}
+        onRemoveTag={vi.fn() as unknown as (tag: string) => void}
       />
     );
 
@@ -90,8 +90,8 @@ describe('TagSelector', () => {
       <TagSelector
         allTags={mockTags}
         selectedTags={['歴史', '日本', 'スポーツ', '科学', '文化']}
-        onSelectTag={vi.fn()}
-        onRemoveTag={vi.fn()}
+        onSelectTag={vi.fn() as unknown as (tag: string) => void}
+        onRemoveTag={vi.fn() as unknown as (tag: string) => void}
       />
     );
 
@@ -103,8 +103,8 @@ describe('TagSelector', () => {
       <TagSelector
         allTags={mockTags}
         selectedTags={['歴史', '日本', 'スポーツ', '科学', '文化']}
-        onSelectTag={vi.fn()}
-        onRemoveTag={vi.fn()}
+        onSelectTag={vi.fn() as unknown as (tag: string) => void}
+        onRemoveTag={vi.fn() as unknown as (tag: string) => void}
       />
     );
 
@@ -119,8 +119,8 @@ describe('TagSelector', () => {
       <TagSelector
         allTags={[]}
         selectedTags={[]}
-        onSelectTag={vi.fn()}
-        onRemoveTag={vi.fn()}
+        onSelectTag={vi.fn() as unknown as (tag: string) => void}
+        onRemoveTag={vi.fn() as unknown as (tag: string) => void}
         loading={true}
       />
     );
@@ -133,8 +133,8 @@ describe('TagSelector', () => {
       <TagSelector
         allTags={[]}
         selectedTags={[]}
-        onSelectTag={vi.fn()}
-        onRemoveTag={vi.fn()}
+        onSelectTag={vi.fn() as unknown as (tag: string) => void}
+        onRemoveTag={vi.fn() as unknown as (tag: string) => void}
         error="タグの取得に失敗しました"
       />
     );
@@ -147,8 +147,8 @@ describe('TagSelector', () => {
       <TagSelector
         allTags={[]}
         selectedTags={[]}
-        onSelectTag={vi.fn()}
-        onRemoveTag={vi.fn()}
+        onSelectTag={vi.fn() as unknown as (tag: string) => void}
+        onRemoveTag={vi.fn() as unknown as (tag: string) => void}
       />
     );
 
@@ -160,8 +160,8 @@ describe('TagSelector', () => {
       <TagSelector
         allTags={mockTags}
         selectedTags={['歴史']}
-        onSelectTag={vi.fn()}
-        onRemoveTag={vi.fn()}
+        onSelectTag={vi.fn() as unknown as (tag: string) => void}
+        onRemoveTag={vi.fn() as unknown as (tag: string) => void}
       />
     );
 
@@ -169,6 +169,6 @@ describe('TagSelector', () => {
     const selectedTag = selectedSection!.querySelector('button');
 
     // 選択済みタグには特定のクラスが付与される
-    expect(selectedTag).toHaveClass('bg-blue-500');
+    expect(selectedTag).toHaveClass('bg-black/5');
   });
 });
