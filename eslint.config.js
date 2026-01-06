@@ -30,14 +30,16 @@ export default [
       ...js.configs.recommended.rules,
       ...tseslint.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_' },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+  {
+    // Node.js 環境で動くファイル（process 等）
+    files: ['vite.config.ts', 'src/server/**/*.{ts,tsx}'],
+    languageOptions: {
+      globals: globals.node,
     },
   },
 ]
+

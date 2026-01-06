@@ -36,7 +36,10 @@ class MockWebSocket {
 
 // グローバルにWebSocketをモック
 beforeAll(() => {
-  (global as any).WebSocket = MockWebSocket;
+  Object.defineProperty(globalThis, 'WebSocket', {
+    value: MockWebSocket,
+    writable: true,
+  });
 });
 
 // 各テストの後にDOMをクリーンアップ
