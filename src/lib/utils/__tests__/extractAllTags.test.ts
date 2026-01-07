@@ -35,7 +35,7 @@ describe('extractAllTags', () => {
 
       const tags = extractAllTags(events);
 
-      expect(tags).toEqual(['スポーツ', '日本', '歴史']);
+      expect(tags).toEqual(['歴史', '日本', 'スポーツ']);
     });
 
     it('重複するタグは1つにまとめられる', () => {
@@ -67,10 +67,10 @@ describe('extractAllTags', () => {
 
       // 重複なし: 歴史、日本、戦争、スポーツ
       expect(tags).toHaveLength(4);
-      expect(tags).toEqual(['スポーツ', '戦争', '日本', '歴史']);
+      expect(tags).toEqual(['歴史', '日本', '戦争', 'スポーツ']);
     });
 
-    it('タグがアルファベット順（文字コード順）でソートされている', () => {
+    it('同数タグは最初の出現順で並ぶ', () => {
       const events: Event[] = [
         {
           id: '1',
@@ -83,8 +83,8 @@ describe('extractAllTags', () => {
 
       const tags = extractAllTags(events);
 
-      // ソート済み
-      expect(tags).toEqual(['アメリカ', 'スポーツ', '日本']);
+      // 最初の出現順
+      expect(tags).toEqual(['日本', 'アメリカ', 'スポーツ']);
     });
 
     it('単一イベントからタグを抽出できる', () => {
@@ -179,7 +179,7 @@ describe('extractAllTags', () => {
 
       const tags = extractAllTags(events);
 
-      expect(tags).toEqual(['日本', '歴史']);
+      expect(tags).toEqual(['歴史', '日本']);
     });
   });
 
@@ -197,7 +197,7 @@ describe('extractAllTags', () => {
 
       const tags = extractAllTags(events);
 
-      expect(tags).toEqual(['スポーツ', '文化', '歴史', '科学']);
+      expect(tags).toEqual(['歴史', '科学', 'スポーツ', '文化']);
     });
 
     it('英数字タグを正しく処理できる', () => {
@@ -213,10 +213,10 @@ describe('extractAllTags', () => {
 
       const tags = extractAllTags(events);
 
-      expect(tags).toEqual(['ABC', 'Tag1', 'Tag2', 'XYZ']);
+      expect(tags).toEqual(['Tag1', 'Tag2', 'ABC', 'XYZ']);
     });
 
-    it('混在する言語のタグを正しくソートできる', () => {
+    it('混在する言語のタグを正しく処理できる', () => {
       const events: Event[] = [
         {
           id: '1',
@@ -229,8 +229,8 @@ describe('extractAllTags', () => {
 
       const tags = extractAllTags(events);
 
-      // 文字コード順: A, C, F, 日
-      expect(tags).toEqual(['America', 'China', 'フランス', '日本']);
+      // 最初の出現順
+      expect(tags).toEqual(['日本', 'America', 'フランス', 'China']);
     });
   });
 });

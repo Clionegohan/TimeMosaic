@@ -56,11 +56,30 @@ describe('API Handlers (ATDD)', () => {
       expect(result.tags).toEqual(uniqueTags);
     });
 
-    it('タグはソート済みである', async () => {
+    it('タグは出現数降順・同数は出現順である', async () => {
       const result = await getTags(sampleFilePath);
 
-      const sortedTags = [...result.tags].sort();
-      expect(result.tags).toEqual(sortedTags);
+      expect(result.tags).toEqual([
+        '日本',
+        '歴史',
+        '西洋文化',
+        '第二次世界大戦',
+        'スポーツ',
+        'オリンピック',
+        '建築',
+        'フランス',
+        '科学',
+        '宇宙',
+        'アメリカ',
+        '文化',
+        'ドイツ',
+        '冷戦',
+        '災害',
+        '貿易',
+        '政治',
+        '戦争',
+        '世界',
+      ]);
     });
 
     it('タグ数が正しい', async () => {

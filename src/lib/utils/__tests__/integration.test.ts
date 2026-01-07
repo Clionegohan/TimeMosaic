@@ -178,8 +178,8 @@ describe('マルチカラムロジック統合テスト（ATDD）', () => {
     });
   });
 
-  describe('シナリオ2: タグ抽出とソート順', () => {
-    it('全イベントからタグ一覧を抽出し、ソート済みで返す', () => {
+  describe('シナリオ2: タグ抽出と並び順', () => {
+    it('全イベントからタグ一覧を抽出し、出現数降順・同数は出現順で返す', () => {
       const allTags = extractAllTags(sampleEvents);
 
       // タグが抽出される
@@ -189,9 +189,28 @@ describe('マルチカラムロジック統合テスト（ATDD）', () => {
       const uniqueTags = Array.from(new Set(allTags));
       expect(allTags).toEqual(uniqueTags);
 
-      // ソート済み（日本語は文字コード順）
-      const sortedTags = [...allTags].sort();
-      expect(allTags).toEqual(sortedTags);
+      // 出現数降順・同数は最初の出現順
+      expect(allTags).toEqual([
+        '日本',
+        '歴史',
+        '西洋文化',
+        '貿易',
+        '政治',
+        '建築',
+        'フランス',
+        '戦争',
+        '世界',
+        '第二次世界大戦',
+        'スポーツ',
+        'オリンピック',
+        '科学',
+        '宇宙',
+        'アメリカ',
+        '文化',
+        'ドイツ',
+        '冷戦',
+        '災害',
+      ]);
 
       // 期待されるタグが含まれている
       expect(allTags).toContain('歴史');
