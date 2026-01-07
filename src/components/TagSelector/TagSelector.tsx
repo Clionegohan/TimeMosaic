@@ -42,8 +42,8 @@ export function TagSelector({
     if (!element) return;
 
     const onWheel = (event: WheelEvent) => {
-      // すでに横スクロール入力がある場合はそのまま（トラックパッドなど）
-      if (event.deltaX !== 0) return;
+      // 横方向の入力が強い場合はブラウザの横スクロールに任せる
+      if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
       // Shift+ホイールはブラウザの横スクロールとして扱うことが多いので邪魔しない
       if (event.shiftKey) return;
