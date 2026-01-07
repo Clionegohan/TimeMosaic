@@ -20,14 +20,14 @@ describe('EventDetailModal', () => {
     raw: '',
   };
 
-  let mockOnClose: ReturnType<typeof vi.fn>;
+  let mockOnClose: () => void;
 
   beforeEach(() => {
     mockOnClose = vi.fn();
   });
 
   it('イベントの詳細情報が表示される', () => {
-    render(<EventDetailModal event={mockEvent} onClose={mockOnClose} />);
+    render(<EventDetailModal event={mockEvent} onClose={() => mockOnClose()} />);
 
     expect(screen.getByText('終戦')).toBeInTheDocument();
     expect(screen.getByText('日付: 1945年8月15日')).toBeInTheDocument();
@@ -38,7 +38,7 @@ describe('EventDetailModal', () => {
 
   it('閉じるボタンでモーダルが閉じる', async () => {
     const user = userEvent.setup();
-    render(<EventDetailModal event={mockEvent} onClose={mockOnClose} />);
+    render(<EventDetailModal event={mockEvent} onClose={() => mockOnClose()} />);
 
     const closeButton = screen.getByText('閉じる');
     await user.click(closeButton);
@@ -48,7 +48,7 @@ describe('EventDetailModal', () => {
 
   it('オーバーレイクリックでモーダルが閉じる', async () => {
     const user = userEvent.setup();
-    const { container } = render(<EventDetailModal event={mockEvent} onClose={mockOnClose} />);
+    const { container } = render(<EventDetailModal event={mockEvent} onClose={() => mockOnClose()} />);
 
     const overlay = container.querySelector('.fixed');
     await user.click(overlay!);
@@ -58,17 +58,17 @@ describe('EventDetailModal', () => {
 
   it('モーダルコンテンツクリックでは閉じない', async () => {
     const user = userEvent.setup();
-    const { container } = render(<EventDetailModal event={mockEvent} onClose={mockOnClose} />);
+    render(<EventDetailModal event={mockEvent} onClose={() => mockOnClose()} />);
 
-    const content = container.querySelector('.bg-white');
-    await user.click(content!);
+    const content = screen.getByRole('dialog');
+    await user.click(content);
 
     expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   it('説明文がない場合は詳細セクションが表示されない', () => {
     const eventWithoutDesc: Event = { ...mockEvent, description: undefined };
-    render(<EventDetailModal event={eventWithoutDesc} onClose={mockOnClose} />);
+    render(<EventDetailModal event={eventWithoutDesc} onClose={() => mockOnClose()} />);
 
     expect(screen.queryByText('詳細')).not.toBeInTheDocument();
   });

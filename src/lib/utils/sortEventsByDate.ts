@@ -8,10 +8,9 @@ import type { Event } from '../parser/types';
  * イベントを年号順にソート
  *
  * @param events イベント配列
- * @param order ソート順（'asc': 古い順、'desc': 新しい順）
  * @returns ソート済みイベント配列（新しい配列）
  */
-export function sortEventsByDate(events: Event[], order: 'asc' | 'desc' = 'asc'): Event[] {
+export function sortEventsByDate(events: Event[]): Event[] {
   // イミュータビリティのため、配列をコピー
   const sortedEvents = [...events];
 
@@ -35,10 +34,10 @@ export function sortEventsByDate(events: Event[], order: 'asc' | 'desc' = 'asc')
     return aDay - bDay;
   };
 
-  // ソート実行（降順の場合は比較関数を反転）
+  // ソート実行（昇順）
   sortedEvents.sort((a, b) => {
     const result = compareDateAsc(a, b);
-    return order === 'desc' ? -result : result;
+    return result;
   });
 
   return sortedEvents;

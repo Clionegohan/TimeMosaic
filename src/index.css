@@ -1,3 +1,42 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    /* Museum white wall */
+    --tm-paper: #FFFCF9;
+
+    /* Ink + neutrals */
+    --tm-ink: #171717;
+    --tm-muted: #57534e;
+    --tm-stroke: rgba(28, 25, 23, 0.14);
+    --tm-focus: rgba(120, 113, 108, 0.45);
+
+    --tm-font-serif: "Noto Serif JP", ui-serif, Georgia, serif;
+  }
+
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background: var(--tm-paper);
+    color: var(--tm-ink);
+    font-family: var(--tm-font-serif);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    background: rgba(120, 113, 108, 0.22);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--tm-focus);
+    outline-offset: 3px;
+  }
+}
+

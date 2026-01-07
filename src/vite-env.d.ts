@@ -9,8 +9,8 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
   readonly hot?: {
-    on(event: string, callback: (data: any) => void): void;
-    off(event: string, callback: (data: any) => void): void;
-    send(event: string, data?: any): void;
+    on(event: string, callback: (data: unknown) => void): void;
+    off(event: string, callback: (data: unknown) => void): void;
+    send(event: string, data?: unknown): void;
   };
 }

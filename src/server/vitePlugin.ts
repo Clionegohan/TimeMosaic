@@ -79,7 +79,6 @@ export function eventsApiPlugin(eventsFilePath?: string): Plugin {
             // URLからクエリパラメータを解析
             const url = new URL(req.url, `http://${req.headers.host}`);
             const tagsParam = url.searchParams.get('tags');
-            const orderParam = url.searchParams.get('order');
 
             // クエリパラメータのバリデーション
             if (!tagsParam) {
@@ -89,7 +88,7 @@ export function eventsApiPlugin(eventsFilePath?: string): Plugin {
                 JSON.stringify(
                   {
                     error: 'Missing required parameter: tags',
-                    example: '/api/columns?tags=歴史,日本&order=asc',
+                    example: '/api/columns?tags=歴史,日本',
                   },
                   null,
                   2
@@ -112,7 +111,7 @@ export function eventsApiPlugin(eventsFilePath?: string): Plugin {
                 JSON.stringify(
                   {
                     error: 'At least one valid tag is required',
-                    example: '/api/columns?tags=歴史,日本&order=asc',
+                    example: '/api/columns?tags=歴史,日本',
                   },
                   null,
                   2
@@ -121,11 +120,8 @@ export function eventsApiPlugin(eventsFilePath?: string): Plugin {
               return;
             }
 
-            // ソート順のバリデーション
-            const sortOrder = orderParam === 'desc' ? 'desc' : 'asc';
-
             // カラムデータを取得
-            const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
+            const result = await getColumns(sampleFilePath, selectedTags);
 
             res.setHeader('Content-Type', 'application/json');
             res.statusCode = 200;

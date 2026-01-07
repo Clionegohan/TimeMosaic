@@ -35,29 +35,29 @@ describe('EventCard', () => {
     const historyTag = screen.getByText('#歴史');
     const japanTag = screen.getByText('#日本');
 
-    // bg-blue-100 と text-blue-700 がハイライトタグに適用される
-    expect(historyTag).toHaveClass('bg-blue-100', 'text-blue-700');
-    // bg-gray-100 と text-gray-600 が通常タグに適用される
-    expect(japanTag).toHaveClass('bg-gray-100', 'text-gray-600');
+    expect(historyTag).toHaveClass('bg-black/5');
+    expect(japanTag).toHaveClass('bg-black/3');
   });
 
-  it('説明文が50文字に切り詰められる', () => {
+  it('説明文は常に1行で省略表示される', () => {
     const longDescription = 'a'.repeat(100);
     const eventWithLongDesc: Event = { ...mockEvent, description: longDescription };
 
     render(<EventCard event={eventWithLongDesc} highlightTag="歴史" />);
 
-    const descText = 'a'.repeat(50) + '...';
-    expect(screen.getByText(descText)).toBeInTheDocument();
+    const desc = screen.getByText(longDescription);
+    expect(desc).toHaveClass('truncate');
+    expect(desc).toHaveAttribute('title', longDescription);
   });
 
   it('説明文がない場合は表示されない', () => {
     const eventWithoutDesc: Event = { ...mockEvent, description: undefined };
 
-    const { container } = render(<EventCard event={eventWithoutDesc} highlightTag="歴史" />);
+    render(<EventCard event={eventWithoutDesc} highlightTag="歴史" />);
 
-    expect(container.textContent).not.toContain('...');
+    expect(screen.queryByText(mockEvent.description!)).not.toBeInTheDocument();
   });
+
 
   it('クリックでモーダルが開く', async () => {
     const user = userEvent.setup();

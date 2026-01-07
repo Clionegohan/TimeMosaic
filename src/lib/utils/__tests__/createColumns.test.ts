@@ -15,7 +15,7 @@ describe('createColumns', () => {
         { id: '3', date: { year: 1914 }, title: '第一次世界大戦', tags: ['歴史', '戦争'], raw: '' },
       ];
 
-      const columns = createColumns(events, ['歴史', '日本'], 'asc');
+      const columns = createColumns(events, ['歴史', '日本']);
 
       expect(columns).toHaveLength(2);
       expect(columns[0].tag).toBe('歴史');
@@ -29,7 +29,7 @@ describe('createColumns', () => {
         { id: '3', date: { year: 1914 }, title: '第一次世界大戦', tags: ['歴史', '戦争'], raw: '' },
       ];
 
-      const columns = createColumns(events, ['歴史', '日本'], 'asc');
+      const columns = createColumns(events, ['歴史', '日本']);
 
       // 歴史列には2つのイベント
       expect(columns[0].events).toHaveLength(2);
@@ -49,27 +49,12 @@ describe('createColumns', () => {
         { id: '3', date: { year: 1964 }, title: 'E3', tags: ['歴史'], raw: '' },
       ];
 
-      const columns = createColumns(events, ['歴史'], 'asc');
+      const columns = createColumns(events, ['歴史']);
 
       expect(columns[0].events).toHaveLength(3);
       expect(columns[0].events[0].date.year).toBe(1945);
       expect(columns[0].events[1].date.year).toBe(1964);
       expect(columns[0].events[2].date.year).toBe(1989);
-    });
-
-    it('各列のイベントが降順でソートされている', () => {
-      const events: Event[] = [
-        { id: '1', date: { year: 1945 }, title: 'E1', tags: ['歴史'], raw: '' },
-        { id: '2', date: { year: 1989 }, title: 'E2', tags: ['歴史'], raw: '' },
-        { id: '3', date: { year: 1964 }, title: 'E3', tags: ['歴史'], raw: '' },
-      ];
-
-      const columns = createColumns(events, ['歴史'], 'desc');
-
-      expect(columns[0].events).toHaveLength(3);
-      expect(columns[0].events[0].date.year).toBe(1989);
-      expect(columns[0].events[1].date.year).toBe(1964);
-      expect(columns[0].events[2].date.year).toBe(1945);
     });
 
     it('複数の列を生成できる', () => {
@@ -80,7 +65,7 @@ describe('createColumns', () => {
         { id: '4', date: { year: 1989 }, title: 'E4', tags: ['ドイツ', '冷戦'], raw: '' },
       ];
 
-      const columns = createColumns(events, ['歴史', '日本', 'スポーツ', 'ドイツ'], 'asc');
+      const columns = createColumns(events, ['歴史', '日本', 'スポーツ', 'ドイツ']);
 
       expect(columns).toHaveLength(4);
       expect(columns[0].tag).toBe('歴史');
@@ -95,12 +80,12 @@ describe('createColumns', () => {
       ];
 
       // 日本、歴史の順
-      const columns1 = createColumns(events, ['日本', '歴史'], 'asc');
+      const columns1 = createColumns(events, ['日本', '歴史']);
       expect(columns1[0].tag).toBe('日本');
       expect(columns1[1].tag).toBe('歴史');
 
       // 歴史、日本の順
-      const columns2 = createColumns(events, ['歴史', '日本'], 'asc');
+      const columns2 = createColumns(events, ['歴史', '日本']);
       expect(columns2[0].tag).toBe('歴史');
       expect(columns2[1].tag).toBe('日本');
     });
@@ -112,7 +97,7 @@ describe('createColumns', () => {
         { id: '1', date: { year: 1945 }, title: 'E1', tags: ['歴史'], raw: '' },
       ];
 
-      const columns = createColumns(events, [], 'asc');
+      const columns = createColumns(events, []);
 
       expect(columns).toEqual([]);
     });
@@ -122,7 +107,7 @@ describe('createColumns', () => {
         { id: '1', date: { year: 1945 }, title: 'E1', tags: ['歴史'], raw: '' },
       ];
 
-      const columns = createColumns(events, ['存在しないタグ'], 'asc');
+      const columns = createColumns(events, ['存在しないタグ']);
 
       expect(columns).toHaveLength(1);
       expect(columns[0].tag).toBe('存在しないタグ');
@@ -137,7 +122,7 @@ describe('createColumns', () => {
 
       const original = [...events];
 
-      createColumns(events, ['歴史'], 'asc');
+      createColumns(events, ['歴史']);
 
       // 元の配列は変更されていない
       expect(events).toEqual(original);
@@ -145,7 +130,7 @@ describe('createColumns', () => {
     });
 
     it('空のイベント配列で空の列を返す', () => {
-      const columns = createColumns([], ['歴史'], 'asc');
+      const columns = createColumns([], ['歴史']);
 
       expect(columns).toHaveLength(1);
       expect(columns[0].tag).toBe('歴史');
@@ -172,7 +157,7 @@ describe('createColumns', () => {
         { id: '2', date: { year: 1964 }, title: '東京オリンピック', tags: ['スポーツ', '日本'], raw: '' },
       ];
 
-      const columns = createColumns(events, ['歴史', '日本', '戦争'], 'asc');
+      const columns = createColumns(events, ['歴史', '日本', '戦争']);
 
       // 終戦記念日は3つの列全てに表示される
       expect(columns[0].events.find((e) => e.id === '1')).toBeDefined(); // 歴史列
@@ -194,7 +179,7 @@ describe('createColumns', () => {
         { id: '5', date: { year: 1964 }, title: '東京オリンピック', tags: ['スポーツ', '日本'], raw: '' },
       ];
 
-      const columns = createColumns(events, ['歴史', '日本'], 'asc');
+      const columns = createColumns(events, ['歴史', '日本']);
 
       // 歴史列: 鉄砲伝来、明治維新、終戦記念日
       expect(columns[0].tag).toBe('歴史');
@@ -224,7 +209,7 @@ describe('createColumns', () => {
         { id: '4', date: { year: 1964, month: 10, day: 10 }, title: '東京オリンピック', tags: ['歴史'], raw: '' },
       ];
 
-      const columns = createColumns(events, ['歴史'], 'asc');
+      const columns = createColumns(events, ['歴史']);
 
       expect(columns[0].events).toHaveLength(4);
       expect(columns[0].events[0].title).toBe('1945年のイベント'); // 年のみが最初

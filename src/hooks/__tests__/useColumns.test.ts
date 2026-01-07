@@ -20,11 +20,11 @@ describe('useColumns', () => {
       ok: true,
       json: async () => ({
         columns: [],
-        metadata: { selectedTags: ['歴史'], sortOrder: 'asc', totalEvents: 0 },
+        metadata: { selectedTags: ['歴史'], totalEvents: 0 },
       }),
     } as Response);
 
-    const { result } = renderHook(() => useColumns(['歴史'], 'asc'));
+    const { result } = renderHook(() => useColumns(['歴史']));
 
     expect(result.current.loading).toBe(true);
     expect(result.current.columns).toEqual([]);
@@ -32,7 +32,7 @@ describe('useColumns', () => {
   });
 
   it('タグが空の場合はAPIを呼び出さない', () => {
-    const { result } = renderHook(() => useColumns([], 'asc'));
+    const { result } = renderHook(() => useColumns([]));
 
     expect(result.current.loading).toBe(false);
     expect(result.current.columns).toEqual([]);
@@ -60,11 +60,11 @@ describe('useColumns', () => {
       ok: true,
       json: async () => ({
         columns: mockColumns,
-        metadata: { selectedTags: ['歴史'], sortOrder: 'asc', totalEvents: 10 },
+        metadata: { selectedTags: ['歴史'], totalEvents: 10 },
       }),
     } as Response);
 
-    const { result } = renderHook(() => useColumns(['歴史'], 'asc'));
+    const { result } = renderHook(() => useColumns(['歴史']));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -73,7 +73,6 @@ describe('useColumns', () => {
     expect(result.current.columns).toEqual(mockColumns);
     expect(result.current.metadata).toEqual({
       selectedTags: ['歴史'],
-      sortOrder: 'asc',
       totalEvents: 10,
     });
     expect(result.current.error).toBeNull();
@@ -84,16 +83,14 @@ describe('useColumns', () => {
       ok: true,
       json: async () => ({
         columns: [],
-        metadata: { selectedTags: ['歴史', '日本'], sortOrder: 'desc', totalEvents: 0 },
+        metadata: { selectedTags: ['歴史', '日本'], totalEvents: 0 },
       }),
     } as Response);
 
-    renderHook(() => useColumns(['歴史', '日本'], 'desc'));
+    renderHook(() => useColumns(['歴史', '日本']));
 
     await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith(
-        '/api/columns?tags=%E6%AD%B4%E5%8F%B2,%E6%97%A5%E6%9C%AC&order=desc'
-      );
+      expect(fetch).toHaveBeenCalledWith('/api/columns?tags=%E6%AD%B4%E5%8F%B2,%E6%97%A5%E6%9C%AC');
     });
   });
 
@@ -129,11 +126,11 @@ describe('useColumns', () => {
       ok: true,
       json: async () => ({
         columns: mockColumns,
-        metadata: { selectedTags: ['歴史', '日本'], sortOrder: 'asc', totalEvents: 10 },
+        metadata: { selectedTags: ['歴史', '日本'], totalEvents: 10 },
       }),
     } as Response);
 
-    const { result } = renderHook(() => useColumns(['歴史', '日本'], 'asc'));
+    const { result } = renderHook(() => useColumns(['歴史', '日本']));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -148,7 +145,7 @@ describe('useColumns', () => {
       status: 500,
     } as Response);
 
-    const { result } = renderHook(() => useColumns(['歴史'], 'asc'));
+    const { result } = renderHook(() => useColumns(['歴史']));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -161,7 +158,7 @@ describe('useColumns', () => {
   it('ネットワークエラー時にエラーメッセージをセットする', async () => {
     vi.mocked(fetch).mockRejectedValueOnce(new Error('Network error'));
 
-    const { result } = renderHook(() => useColumns(['歴史'], 'asc'));
+    const { result } = renderHook(() => useColumns(['歴史']));
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -194,71 +191,30 @@ describe('useColumns', () => {
         ok: true,
         json: async () => ({
           columns: mockColumns1,
-          metadata: { selectedTags: ['歴史'], sortOrder: 'asc', totalEvents: 10 },
+          metadata: { selectedTags: ['歴史'], totalEvents: 10 },
         }),
       } as Response)
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           columns: mockColumns2,
-          metadata: { selectedTags: ['歴史', '日本'], sortOrder: 'asc', totalEvents: 10 },
+          metadata: { selectedTags: ['歴史', '日本'], totalEvents: 10 },
         }),
       } as Response);
 
-    const { result, rerender } = renderHook(
-      ({ tags, order }) => useColumns(tags, order),
-      {
-        initialProps: { tags: ['歴史'], order: 'asc' as const },
-      }
-    );
+    const { result, rerender } = renderHook(({ tags }) => useColumns(tags), {
+      initialProps: { tags: ['歴史'] },
+    });
 
     await waitFor(() => {
       expect(result.current.columns).toEqual(mockColumns1);
     });
 
     // selectedTags を変更
-    rerender({ tags: ['歴史', '日本'], order: 'asc' as const });
+    rerender({ tags: ['歴史', '日本'] });
 
     await waitFor(() => {
       expect(result.current.columns).toEqual(mockColumns2);
-    });
-
-    expect(fetch).toHaveBeenCalledTimes(2);
-  });
-
-  it('sortOrder が変更されたら再フェッチする', async () => {
-    vi.mocked(fetch)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          columns: [],
-          metadata: { selectedTags: ['歴史'], sortOrder: 'asc', totalEvents: 10 },
-        }),
-      } as Response)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          columns: [],
-          metadata: { selectedTags: ['歴史'], sortOrder: 'desc', totalEvents: 10 },
-        }),
-      } as Response);
-
-    const { result, rerender } = renderHook(
-      ({ tags, order }) => useColumns(tags, order),
-      {
-        initialProps: { tags: ['歴史'], order: 'asc' as const },
-      }
-    );
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
-    });
-
-    // sortOrder を変更
-    rerender({ tags: ['歴史'], order: 'desc' as const });
-
-    await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/columns?tags=%E6%AD%B4%E5%8F%B2&order=desc');
     });
 
     expect(fetch).toHaveBeenCalledTimes(2);
@@ -291,18 +247,18 @@ describe('useColumns', () => {
         ok: true,
         json: async () => ({
           columns: mockColumns1,
-          metadata: { selectedTags: ['歴史'], sortOrder: 'asc', totalEvents: 0 },
+          metadata: { selectedTags: ['歴史'], totalEvents: 0 },
         }),
       } as Response)
       .mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           columns: mockColumns2,
-          metadata: { selectedTags: ['歴史'], sortOrder: 'asc', totalEvents: 1 },
+          metadata: { selectedTags: ['歴史'], totalEvents: 1 },
         }),
       } as Response);
 
-    const { result } = renderHook(() => useColumns(['歴史'], 'asc'));
+    const { result } = renderHook(() => useColumns(['歴史']));
 
     await waitFor(() => {
       expect(result.current.columns).toEqual(mockColumns1);

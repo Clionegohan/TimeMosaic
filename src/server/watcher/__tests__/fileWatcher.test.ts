@@ -7,11 +7,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { setupFileWatcher } from '../fileWatcher';
 import chokidar from 'chokidar';
-import fs from 'fs/promises';
-import path from 'path';
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import type { WebSocketServer } from 'ws';
 
 describe('setupFileWatcher', () => {
-  const testDir = path.join(__dirname, 'fixtures');
+  const testDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'fixtures');
   const testFile = path.join(testDir, 'test-events.md');
   let watcher: ReturnType<typeof chokidar.watch>;
 
@@ -48,9 +50,11 @@ describe('setupFileWatcher', () => {
   });
 
   it('WebSocketサーバーにファイル変更が通知される', async () => {
+    const mockSend = vi.fn();
+
     const mockClient = {
       readyState: 1, // WebSocket.OPEN
-      send: vi.fn(),
+      send: mockSend,
     };
 
     const mockWss = {
@@ -61,16 +65,20 @@ describe('setupFileWatcher', () => {
       {
         filePath: testFile,
       },
-      mockWss as any
+      mockWss as unknown as WebSocketServer
     );
 
     await new Promise((resolve) => setTimeout(resolve, 100));
     await fs.appendFile(testFile, '\n## Another Event\n');
     await new Promise((resolve) => setTimeout(resolve, 600));
 
-    expect(mockClient.send).toHaveBeenCalled();
+    expect(mockSend).toHaveBeenCalled();
 
-    const sentMessage = JSON.parse((mockClient.send as any).mock.calls[0][0]);
+    const sentMessage = JSON.parse(mockSend.mock.calls[0]?.[0] as string) as {
+      type: string;
+      path: string;
+    };
+
     expect(sentMessage.type).toBe('file-changed');
     expect(sentMessage.path).toBe(testFile);
   });

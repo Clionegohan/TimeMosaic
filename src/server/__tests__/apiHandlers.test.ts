@@ -90,9 +90,7 @@ describe('API Handlers (ATDD)', () => {
   describe('AC3: カラムデータ取得 (GET /api/columns)', () => {
     it('選択タグに基づいてカラムデータを生成できる', async () => {
       const selectedTags = ['歴史', '日本'];
-      const sortOrder = 'asc';
-
-      const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
+      const result = await getColumns(sampleFilePath, selectedTags);
 
       expect(result).toBeDefined();
       expect(result.columns).toBeDefined();
@@ -102,9 +100,7 @@ describe('API Handlers (ATDD)', () => {
 
     it('選択タグごとにカラムが生成される', async () => {
       const selectedTags = ['歴史', '日本'];
-      const sortOrder = 'asc';
-
-      const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
+      const result = await getColumns(sampleFilePath, selectedTags);
 
       expect(result.columns).toHaveLength(2);
       expect(result.columns[0].tag).toBe('歴史');
@@ -113,9 +109,7 @@ describe('API Handlers (ATDD)', () => {
 
     it('各カラムのイベントは選択タグでフィルタされている', async () => {
       const selectedTags = ['歴史'];
-      const sortOrder = 'asc';
-
-      const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
+      const result = await getColumns(sampleFilePath, selectedTags);
 
       const historyColumn = result.columns[0];
       expect(historyColumn.tag).toBe('歴史');
@@ -128,9 +122,7 @@ describe('API Handlers (ATDD)', () => {
 
     it('各カラムのイベントは昇順（asc）でソートされている', async () => {
       const selectedTags = ['歴史'];
-      const sortOrder = 'asc';
-
-      const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
+      const result = await getColumns(sampleFilePath, selectedTags);
 
       const historyColumn = result.columns[0];
 
@@ -142,27 +134,9 @@ describe('API Handlers (ATDD)', () => {
       }
     });
 
-    it('各カラムのイベントは降順（desc）でソートされている', async () => {
-      const selectedTags = ['歴史'];
-      const sortOrder = 'desc';
-
-      const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
-
-      const historyColumn = result.columns[0];
-
-      // 年号順（新しい順）にソートされていることを確認
-      for (let i = 0; i < historyColumn.events.length - 1; i++) {
-        const current = historyColumn.events[i].date.year;
-        const next = historyColumn.events[i + 1].date.year;
-        expect(current).toBeGreaterThanOrEqual(next);
-      }
-    });
-
     it('同じイベントが複数カラムに表示される（複数タグ保持時）', async () => {
       const selectedTags = ['歴史', '日本'];
-      const sortOrder = 'asc';
-
-      const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
+      const result = await getColumns(sampleFilePath, selectedTags);
 
       const historyColumn = result.columns[0];
       const japanColumn = result.columns[1];
@@ -178,9 +152,7 @@ describe('API Handlers (ATDD)', () => {
 
     it('存在しないタグを指定しても正常動作する（空カラム）', async () => {
       const selectedTags = ['存在しないタグ'];
-      const sortOrder = 'asc';
-
-      const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
+      const result = await getColumns(sampleFilePath, selectedTags);
 
       expect(result.columns).toHaveLength(1);
       expect(result.columns[0].tag).toBe('存在しないタグ');
@@ -189,32 +161,24 @@ describe('API Handlers (ATDD)', () => {
 
     it('メタデータが正しく返される', async () => {
       const selectedTags = ['歴史', '日本'];
-      const sortOrder = 'asc';
-
-      const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
+      const result = await getColumns(sampleFilePath, selectedTags);
 
       expect(result.metadata.selectedTags).toEqual(['歴史', '日本']);
-      expect(result.metadata.sortOrder).toBe('asc');
       expect(result.metadata.totalEvents).toBe(10);
     });
 
     it('ファイル読み込みエラー時にエラーをスローする', async () => {
       const invalidPath = '/path/to/nonexistent/file.md';
       const selectedTags = ['歴史'];
-      const sortOrder = 'asc';
 
-      await expect(getColumns(invalidPath, selectedTags, sortOrder)).rejects.toThrow(
-        'Failed to read file'
-      );
+      await expect(getColumns(invalidPath, selectedTags)).rejects.toThrow('Failed to read file');
     });
   });
 
   describe('AC4: エッジケース', () => {
     it('空の選択タグリストでも正常動作する', async () => {
       const selectedTags: string[] = [];
-      const sortOrder = 'asc';
-
-      const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
+      const result = await getColumns(sampleFilePath, selectedTags);
 
       expect(result.columns).toHaveLength(0);
       expect(result.metadata.selectedTags).toEqual([]);
@@ -223,11 +187,10 @@ describe('API Handlers (ATDD)', () => {
     it('空文字列タグをフィルタして処理する', async () => {
       // 空文字列とホワイトスペースを含むタグ配列
       const selectedTags = ['歴史', '', '  ', '日本'];
-      const sortOrder = 'asc';
 
       // ハンドラーレベルでは配列を受け取るので、フィルタリング済みと想定
       const filteredTags = selectedTags.filter((tag) => tag.trim().length > 0);
-      const result = await getColumns(sampleFilePath, filteredTags, sortOrder);
+      const result = await getColumns(sampleFilePath, filteredTags);
 
       // 有効なタグのみで2列生成される
       expect(result.columns).toHaveLength(2);
@@ -235,21 +198,5 @@ describe('API Handlers (ATDD)', () => {
       expect(result.columns[1].tag).toBe('日本');
     });
 
-    it('不正なソート順の場合、ascとして扱う', async () => {
-      const selectedTags = ['歴史'];
-      // 不正な値を 'asc' として扱う想定
-      const sortOrder = 'asc'; // 実際のAPIでは 'invalid' が渡されても 'asc' になる
-
-      const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
-
-      const historyColumn = result.columns[0];
-
-      // 昇順でソートされていることを確認
-      for (let i = 0; i < historyColumn.events.length - 1; i++) {
-        const current = historyColumn.events[i].date.year;
-        const next = historyColumn.events[i + 1].date.year;
-        expect(current).toBeLessThanOrEqual(next);
-      }
-    });
   });
 });
