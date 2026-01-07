@@ -8,7 +8,7 @@
  * - 最大5列の制限
  */
 
-import { useEffect, useRef } from 'react';
+import type { WheelEvent } from 'react';
 
 type TagSelectorVariant = 'panel' | 'header';
 
@@ -33,42 +33,34 @@ export function TagSelector({
   error = null,
   variant = 'panel',
 }: TagSelectorProps) {
-  const tagScrollAreaRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
+  const handleHeaderWheel = (event: WheelEvent<HTMLDivElement>) => {
     if (variant !== 'header') return;
 
-    const element = tagScrollAreaRef.current;
-    if (!element) return;
+    const element = event.currentTarget;
 
-    const onWheel = (event: WheelEvent) => {
-      // すでに横スクロール入力がある場合はそのまま（トラックパッドなど）
-      if (event.deltaX !== 0) return;
+    // 横方向の入力が強い場合はブラウザの横スクロールに任せる
+    if (Math.abs(event.deltaX) > Math.abs(event.deltaY)) return;
 
-      // Shift+ホイールはブラウザの横スクロールとして扱うことが多いので邪魔しない
-      if (event.shiftKey) return;
+    // Shift+ホイールはブラウザの横スクロールとして扱うことが多いので邪魔しない
+    if (event.shiftKey) return;
 
-      // 横にスクロールできないなら、ページの縦スクロールを優先
-      const isHorizontallyScrollable = element.scrollWidth > element.clientWidth;
-      if (!isHorizontallyScrollable) return;
+    // 横にスクロールできないなら、ページの縦スクロールを優先
+    const isHorizontallyScrollable = element.scrollWidth > element.clientWidth;
+    if (!isHorizontallyScrollable) return;
 
-      // 縦ホイールを横スクロールに変換
-      if (event.deltaY === 0) return;
+    // 縦ホイールを横スクロールに変換
+    if (event.deltaY === 0) return;
 
-      const nextLeft = element.scrollLeft + event.deltaY;
-      const maxLeft = element.scrollWidth - element.clientWidth;
-      const clampedNextLeft = Math.min(Math.max(0, nextLeft), Math.max(0, maxLeft));
+    const nextLeft = element.scrollLeft + event.deltaY;
+    const maxLeft = element.scrollWidth - element.clientWidth;
+    const clampedNextLeft = Math.min(Math.max(0, nextLeft), Math.max(0, maxLeft));
 
-      // 端にいて動かない場合はページスクロールに譲る
-      if (clampedNextLeft === element.scrollLeft) return;
+    // 端にいて動かない場合はページスクロールに譲る
+    if (clampedNextLeft === element.scrollLeft) return;
 
-      event.preventDefault();
-      element.scrollLeft = clampedNextLeft;
-    };
-
-    element.addEventListener('wheel', onWheel, { passive: false });
-    return () => element.removeEventListener('wheel', onWheel);
-  }, [variant]);
+    event.preventDefault();
+    element.scrollLeft = clampedNextLeft;
+  };
 
   // ローディング状態
   if (loading) {
@@ -119,9 +111,9 @@ export function TagSelector({
     return (
       <div className="min-w-0 flex items-center gap-3">
         <div
-          ref={tagScrollAreaRef}
           className="min-w-0 flex-1 overflow-x-auto"
           aria-label="タグ絞り込み（ホイールで横スクロール）"
+          onWheel={handleHeaderWheel}
         >
           <div className="flex items-center gap-2 flex-nowrap py-1">
             {selectedTags.length > 0 &&
