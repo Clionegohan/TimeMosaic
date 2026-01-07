@@ -36,13 +36,15 @@ export function MultiColumnView({ timelineYears, columns }: MultiColumnViewProps
   }, [yearPositions]);
 
   return (
-    <div className="overflow-x-auto overflow-y-visible rounded-2xl border border-black/10 bg-[var(--tm-paper)] shadow-[0_1px_0_rgba(0,0,0,0.04)]">
-      <div className="flex" style={{ minHeight: containerMinHeight }}>
-        <TimelineColumn years={timelineYears} yearPositions={yearPositions} centuryMarkers={centuryMarkers} />
+    <div className="rounded-2xl border border-black/10 bg-[var(--tm-paper)] shadow-[0_1px_0_rgba(0,0,0,0.04)]">
+      <div className="overflow-x-auto overflow-y-hidden">
+        <div className="flex" style={{ minHeight: containerMinHeight }}>
+          <TimelineColumn years={timelineYears} yearPositions={yearPositions} centuryMarkers={centuryMarkers} />
 
-        {columns.map((column) => (
-          <TagColumn key={column.tag} column={column} yearPositionMap={yearPositionMap} />
-        ))}
+          {columns.map((column) => (
+            <TagColumn key={column.tag} column={column} yearPositionMap={yearPositionMap} />
+          ))}
+        </div>
       </div>
     </div>
   );
