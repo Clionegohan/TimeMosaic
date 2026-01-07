@@ -184,11 +184,8 @@ describe('API Handlers (ATDD)', () => {
     it('ファイル読み込みエラー時にエラーをスローする', async () => {
       const invalidPath = '/path/to/nonexistent/file.md';
       const selectedTags = ['歴史'];
-      const sortOrder = 'asc';
 
-      await expect(getColumns(invalidPath, selectedTags, sortOrder)).rejects.toThrow(
-        'Failed to read file'
-      );
+      await expect(getColumns(invalidPath, selectedTags)).rejects.toThrow('Failed to read file');
     });
   });
 
@@ -204,11 +201,10 @@ describe('API Handlers (ATDD)', () => {
     it('空文字列タグをフィルタして処理する', async () => {
       // 空文字列とホワイトスペースを含むタグ配列
       const selectedTags = ['歴史', '', '  ', '日本'];
-      const sortOrder = 'asc';
 
       // ハンドラーレベルでは配列を受け取るので、フィルタリング済みと想定
       const filteredTags = selectedTags.filter((tag) => tag.trim().length > 0);
-      const result = await getColumns(sampleFilePath, filteredTags, sortOrder);
+      const result = await getColumns(sampleFilePath, filteredTags);
 
       // 有効なタグのみで2列生成される
       expect(result.columns).toHaveLength(2);
@@ -216,21 +212,5 @@ describe('API Handlers (ATDD)', () => {
       expect(result.columns[1].tag).toBe('日本');
     });
 
-    it('不正なソート順の場合、ascとして扱う', async () => {
-      const selectedTags = ['歴史'];
-      // 不正な値を 'asc' として扱う想定
-      const sortOrder = 'asc'; // 実際のAPIでは 'invalid' が渡されても 'asc' になる
-
-      const result = await getColumns(sampleFilePath, selectedTags, sortOrder);
-
-      const historyColumn = result.columns[0];
-
-      // 昇順でソートされていることを確認
-      for (let i = 0; i < historyColumn.events.length - 1; i++) {
-        const current = historyColumn.events[i].date.year;
-        const next = historyColumn.events[i + 1].date.year;
-        expect(current).toBeLessThanOrEqual(next);
-      }
-    });
   });
 });

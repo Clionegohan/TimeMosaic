@@ -9,7 +9,6 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { useColumns } from '../useColumns';
 import type { Column } from '@/lib/utils/types';
 
-
 describe('useColumns', () => {
   beforeEach(() => {
     // fetch のモック化
@@ -74,7 +73,6 @@ describe('useColumns', () => {
     expect(result.current.columns).toEqual(mockColumns);
     expect(result.current.metadata).toEqual({
       selectedTags: ['歴史'],
-      sortOrder: 'asc',
       totalEvents: 10,
     });
     expect(result.current.error).toBeNull();
@@ -204,60 +202,19 @@ describe('useColumns', () => {
         }),
       } as Response);
 
-    const { result, rerender } = renderHook(
-      ({ tags, order }) => useColumns(tags, order),
-      {
-        initialProps: { tags: ['歴史'], order: 'asc' as const },
-      }
-    );
+    const { result, rerender } = renderHook(({ tags }) => useColumns(tags), {
+      initialProps: { tags: ['歴史'] },
+    });
 
     await waitFor(() => {
       expect(result.current.columns).toEqual(mockColumns1);
     });
 
     // selectedTags を変更
-    rerender({ tags: ['歴史', '日本'], order: 'asc' });
+    rerender({ tags: ['歴史', '日本'] });
 
     await waitFor(() => {
       expect(result.current.columns).toEqual(mockColumns2);
-    });
-
-    expect(fetch).toHaveBeenCalledTimes(2);
-  });
-
-  it.skip('sortOrder が変更されたら再フェッチする', async () => {
-    vi.mocked(fetch)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          columns: [],
-          metadata: { selectedTags: ['歴史'], totalEvents: 10 },
-        }),
-      } as Response)
-      .mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          columns: [],
-          metadata: { selectedTags: ['歴史'], sortOrder: 'desc', totalEvents: 10 },
-        }),
-      } as Response);
-
-    const { result, rerender } = renderHook(
-      ({ tags, order }) => useColumns(tags, order),
-      {
-        initialProps: { tags: ['歴史'], order: 'asc' as 'asc' | 'desc' },
-      }
-    );
-
-    await waitFor(() => {
-      expect(result.current.loading).toBe(false);
-    });
-
-    // sortOrder を変更
-    rerender({ tags: ['歴史'], order: 'desc' as 'asc' | 'desc' });
-
-    await waitFor(() => {
-      expect(fetch).toHaveBeenCalledWith('/api/columns?tags=%E6%AD%B4%E5%8F%B2&order=desc');
     });
 
     expect(fetch).toHaveBeenCalledTimes(2);

@@ -63,23 +63,6 @@ describe('extractTimelineYears', () => {
     expect(result).toEqual([1543, 1945, 1964]);
   });
 
-  it('降順でソートされる', () => {
-    const columns: Column[] = [
-      {
-        tag: '歴史',
-        events: [
-          { id: '1', date: { year: 1543 }, title: '', tags: [], raw: '' },
-          { id: '2', date: { year: 1945 }, title: '', tags: [], raw: '' },
-          { id: '3', date: { year: 1964 }, title: '', tags: [], raw: '' },
-        ],
-      },
-    ];
-
-    const result = extractTimelineYears(columns);
-
-    expect(result).toEqual([1543, 1945, 1964]);
-  });
-
   it('空のカラムリストの場合は空配列を返す', () => {
     const result = extractTimelineYears([]);
 

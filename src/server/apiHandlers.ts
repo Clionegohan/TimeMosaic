@@ -32,7 +32,6 @@ export interface ColumnsResponse {
   columns: Column[];
   metadata: {
     selectedTags: string[];
-    sortOrder: 'asc' | 'desc';
     totalEvents: number;
   };
 }
@@ -73,24 +72,17 @@ export async function getTags(filePath: string): Promise<TagsResponse> {
  *
  * @param filePath Markdownファイルのパス
  * @param selectedTags 選択タグ配列
- * @param sortOrder ソート順（'asc' または 'desc'）
  * @returns カラム配列とメタデータ
  */
-export async function getColumns(
-  filePath: string,
-  selectedTags: string[],
-  sortOrder: unknown = 'asc'
-): Promise<ColumnsResponse> {
+export async function getColumns(filePath: string, selectedTags: string[]): Promise<ColumnsResponse> {
   const result = await readEventsFromFile(filePath);
 
-  const normalizedSortOrder: 'asc' | 'desc' = sortOrder === 'desc' ? 'desc' : 'asc';
-  const columns = createColumns(result.events, selectedTags, normalizedSortOrder);
+  const columns = createColumns(result.events, selectedTags);
 
   return {
     columns,
     metadata: {
       selectedTags,
-      sortOrder: normalizedSortOrder,
       totalEvents: result.events.length,
     },
   };

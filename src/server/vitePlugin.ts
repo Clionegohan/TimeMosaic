@@ -88,7 +88,7 @@ export function eventsApiPlugin(eventsFilePath?: string): Plugin {
                 JSON.stringify(
                   {
                     error: 'Missing required parameter: tags',
-                    example: '/api/columns?tags=歴史,日本&order=asc',
+                    example: '/api/columns?tags=歴史,日本',
                   },
                   null,
                   2
@@ -111,7 +111,7 @@ export function eventsApiPlugin(eventsFilePath?: string): Plugin {
                 JSON.stringify(
                   {
                     error: 'At least one valid tag is required',
-                    example: '/api/columns?tags=歴史,日本&order=asc',
+                    example: '/api/columns?tags=歴史,日本',
                   },
                   null,
                   2

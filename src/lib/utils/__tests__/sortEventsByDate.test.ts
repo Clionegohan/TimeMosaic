@@ -8,7 +8,7 @@ import type { Event } from '../../parser/types';
 
 describe('sortEventsByDate', () => {
   describe('正常系', () => {
-    it('昇順（asc）でイベントを年号順にソートできる', () => {
+    it('イベントを年号順にソートできる', () => {
       const events: Event[] = [
         { id: '1', date: { year: 1989 }, title: 'E1', tags: [], raw: '' },
         { id: '2', date: { year: 1945 }, title: 'E2', tags: [], raw: '' },
@@ -16,30 +16,13 @@ describe('sortEventsByDate', () => {
         { id: '4', date: { year: 1543 }, title: 'E4', tags: [], raw: '' },
       ];
 
-      const sorted = sortEventsByDate(events, 'asc');
+      const sorted = sortEventsByDate(events);
 
       expect(sorted).toHaveLength(4);
       expect(sorted[0].date.year).toBe(1543);
       expect(sorted[1].date.year).toBe(1945);
       expect(sorted[2].date.year).toBe(1964);
       expect(sorted[3].date.year).toBe(1989);
-    });
-
-    it('降順（desc）でイベントを年号順にソートできる', () => {
-      const events: Event[] = [
-        { id: '1', date: { year: 1543 }, title: 'E1', tags: [], raw: '' },
-        { id: '2', date: { year: 1964 }, title: 'E2', tags: [], raw: '' },
-        { id: '3', date: { year: 1945 }, title: 'E3', tags: [], raw: '' },
-        { id: '4', date: { year: 1989 }, title: 'E4', tags: [], raw: '' },
-      ];
-
-      const sorted = sortEventsByDate(events, 'desc');
-
-      expect(sorted).toHaveLength(4);
-      expect(sorted[0].date.year).toBe(1989);
-      expect(sorted[1].date.year).toBe(1964);
-      expect(sorted[2].date.year).toBe(1945);
-      expect(sorted[3].date.year).toBe(1543);
     });
 
     it('年月日が混在するイベントを正しくソートできる', () => {
@@ -50,7 +33,7 @@ describe('sortEventsByDate', () => {
         { id: '4', date: { year: 1945, month: 8, day: 6 }, title: '広島原爆', tags: [], raw: '' },
       ];
 
-      const sorted = sortEventsByDate(events, 'asc');
+      const sorted = sortEventsByDate(events);
 
       // 年のみ（月日未定義 = 0扱い）が最初
       expect(sorted[0].title).toBe('1945年のみ');
@@ -69,7 +52,7 @@ describe('sortEventsByDate', () => {
         { id: '3', date: { year: 1964, month: 1 }, title: '1月のイベント', tags: [], raw: '' },
       ];
 
-      const sorted = sortEventsByDate(events, 'asc');
+      const sorted = sortEventsByDate(events);
 
       expect(sorted[0].date.month).toBe(1);
       expect(sorted[1].date.month).toBe(7);
@@ -83,7 +66,7 @@ describe('sortEventsByDate', () => {
         { id: '3', date: { year: 1945, month: 8, day: 9 }, title: '長崎', tags: [], raw: '' },
       ];
 
-      const sorted = sortEventsByDate(events, 'asc');
+      const sorted = sortEventsByDate(events);
 
       expect(sorted[0].date.day).toBe(6);
       expect(sorted[1].date.day).toBe(9);
@@ -93,7 +76,7 @@ describe('sortEventsByDate', () => {
 
   describe('エッジケース', () => {
     it('空配列を渡すと空配列を返す', () => {
-      const sorted = sortEventsByDate([], 'asc');
+      const sorted = sortEventsByDate([]);
 
       expect(sorted).toEqual([]);
     });
@@ -103,7 +86,7 @@ describe('sortEventsByDate', () => {
         { id: '1', date: { year: 1945 }, title: 'E1', tags: [], raw: '' },
       ];
 
-      const sorted = sortEventsByDate(events, 'asc');
+      const sorted = sortEventsByDate(events);
 
       expect(sorted).toHaveLength(1);
       expect(sorted[0].id).toBe('1');
@@ -118,7 +101,7 @@ describe('sortEventsByDate', () => {
 
       const original = [...events];
 
-      sortEventsByDate(events, 'asc');
+      sortEventsByDate(events);
 
       // 元の配列は変更されていない
       expect(events).toEqual(original);
@@ -132,7 +115,7 @@ describe('sortEventsByDate', () => {
         { id: '3', date: { year: 1945 }, title: 'E3', tags: [], raw: '' },
       ];
 
-      const sorted = sortEventsByDate(events, 'asc');
+      const sorted = sortEventsByDate(events);
 
       expect(sorted[0].id).toBe('1');
       expect(sorted[1].id).toBe('2');
@@ -147,7 +130,7 @@ describe('sortEventsByDate', () => {
         { id: '2', date: { year: 1945 }, title: '年のみ', tags: [], raw: '' },
       ];
 
-      const sorted = sortEventsByDate(events, 'asc');
+      const sorted = sortEventsByDate(events);
 
       // 年のみ（月 = undefined = 0）が先
       expect(sorted[0].title).toBe('年のみ');
@@ -160,34 +143,33 @@ describe('sortEventsByDate', () => {
         { id: '2', date: { year: 1945, month: 8 }, title: '8月のみ', tags: [], raw: '' },
       ];
 
-      const sorted = sortEventsByDate(events, 'asc');
+      const sorted = sortEventsByDate(events);
 
       // 8月のみ（日 = undefined = 0）が先
       expect(sorted[0].title).toBe('8月のみ');
       expect(sorted[1].title).toBe('8月15日');
     });
 
-    it('デフォルトのソート順は昇順（asc）', () => {
+    it('デフォルトのソート順は昇順', () => {
       const events: Event[] = [
         { id: '1', date: { year: 1989 }, title: 'E1', tags: [], raw: '' },
         { id: '2', date: { year: 1945 }, title: 'E2', tags: [], raw: '' },
       ];
 
-      // orderパラメータを省略
       const sorted = sortEventsByDate(events);
 
       expect(sorted[0].date.year).toBe(1945);
       expect(sorted[1].date.year).toBe(1989);
     });
 
-    it('完全に同じ日付のイベントは元の順序を保持する（昇順）', () => {
+    it('完全に同じ日付のイベントは元の順序を保持する', () => {
       const events: Event[] = [
         { id: '1', date: { year: 1945, month: 8, day: 15 }, title: 'Event A', tags: [], raw: '' },
         { id: '2', date: { year: 1945, month: 8, day: 15 }, title: 'Event B', tags: [], raw: '' },
         { id: '3', date: { year: 1945, month: 8, day: 15 }, title: 'Event C', tags: [], raw: '' },
       ];
 
-      const sorted = sortEventsByDate(events, 'asc');
+      const sorted = sortEventsByDate(events);
 
       // 元の順序を保持
       expect(sorted[0].id).toBe('1');
@@ -195,19 +177,5 @@ describe('sortEventsByDate', () => {
       expect(sorted[2].id).toBe('3');
     });
 
-    it('完全に同じ日付のイベントは元の順序を保持する（降順）', () => {
-      const events: Event[] = [
-        { id: '1', date: { year: 1945, month: 8, day: 15 }, title: 'Event A', tags: [], raw: '' },
-        { id: '2', date: { year: 1945, month: 8, day: 15 }, title: 'Event B', tags: [], raw: '' },
-        { id: '3', date: { year: 1945, month: 8, day: 15 }, title: 'Event C', tags: [], raw: '' },
-      ];
-
-      const sorted = sortEventsByDate(events, 'desc');
-
-      // 降順でも元の順序を保持（安定ソート）
-      expect(sorted[0].id).toBe('1');
-      expect(sorted[1].id).toBe('2');
-      expect(sorted[2].id).toBe('3');
-    });
   });
 });

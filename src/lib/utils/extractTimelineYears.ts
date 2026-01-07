@@ -10,7 +10,6 @@ import type { Column } from './types';
  * カラムデータから Timeline 用の年リストを抽出
  *
  * @param columns カラムデータ
- * @param sortOrder ソート順
  * @returns 重複なしの年リスト（ソート済み）
  */
 export function extractTimelineYears(columns: Column[]): number[] {

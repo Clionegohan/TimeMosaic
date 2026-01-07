@@ -102,7 +102,7 @@ describe('マルチカラムロジック統合テスト（ATDD）', () => {
   describe('シナリオ1: 基本的なマルチカラム表示', () => {
     it('ユーザーが「歴史」と「日本」を選択したときに正しい列が生成される', () => {
       const selectedTags = ['歴史', '日本'];
-      const columns = createColumns(sampleEvents, selectedTags, 'asc');
+      const columns = createColumns(sampleEvents, selectedTags);
 
       // 2つの列が生成される
       expect(columns).toHaveLength(2);
@@ -162,7 +162,7 @@ describe('マルチカラムロジック統合テスト（ATDD）', () => {
 
     it('年月日の混在データも正しくソートされる', () => {
       const selectedTags = ['歴史'];
-      const columns = createColumns(sampleEvents, selectedTags, 'asc');
+      const columns = createColumns(sampleEvents, selectedTags);
 
       const historyColumn = columns[0];
 
@@ -227,7 +227,7 @@ describe('マルチカラムロジック統合テスト（ATDD）', () => {
 
   describe('シナリオ3: エッジケース', () => {
     it('存在しないタグを選択しても正しく動作する', () => {
-      const columns = createColumns(sampleEvents, ['存在しないタグ', '歴史'], 'asc');
+      const columns = createColumns(sampleEvents, ['存在しないタグ', '歴史']);
 
       expect(columns).toHaveLength(2);
 
@@ -241,19 +241,19 @@ describe('マルチカラムロジック統合テスト（ATDD）', () => {
     });
 
     it('空の選択タグリストで空配列を返す', () => {
-      const columns = createColumns(sampleEvents, [], 'asc');
+      const columns = createColumns(sampleEvents, []);
 
       expect(columns).toHaveLength(0);
     });
 
     it('選択タグの順序で列が返される', () => {
       // 日本、歴史の順で選択
-      const columns1 = createColumns(sampleEvents, ['日本', '歴史'], 'asc');
+      const columns1 = createColumns(sampleEvents, ['日本', '歴史']);
       expect(columns1[0].tag).toBe('日本');
       expect(columns1[1].tag).toBe('歴史');
 
       // 歴史、日本の順で選択
-      const columns2 = createColumns(sampleEvents, ['歴史', '日本'], 'asc');
+      const columns2 = createColumns(sampleEvents, ['歴史', '日本']);
       expect(columns2[0].tag).toBe('歴史');
       expect(columns2[1].tag).toBe('日本');
     });
@@ -262,10 +262,10 @@ describe('マルチカラムロジック統合テスト（ATDD）', () => {
       const allTags = extractAllTags([]);
       expect(allTags).toEqual([]);
 
-      const sorted = sortEventsByDate([], 'asc');
+      const sorted = sortEventsByDate([]);
       expect(sorted).toEqual([]);
 
-      const columns = createColumns([], ['歴史'], 'asc');
+      const columns = createColumns([], ['歴史']);
       expect(columns).toHaveLength(1);
       expect(columns[0].events).toHaveLength(0);
     });
@@ -276,13 +276,13 @@ describe('マルチカラムロジック統合テスト（ATDD）', () => {
       const originalEvents = [...sampleEvents];
 
       // ソート実行
-      sortEventsByDate(sampleEvents, 'desc');
+      sortEventsByDate(sampleEvents);
 
       // 元の配列は変更されていない
       expect(sampleEvents).toEqual(originalEvents);
 
       // カラム生成実行
-      createColumns(sampleEvents, ['歴史'], 'asc');
+      createColumns(sampleEvents, ['歴史']);
 
       // 元の配列は変更されていない
       expect(sampleEvents).toEqual(originalEvents);
