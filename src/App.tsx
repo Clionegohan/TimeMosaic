@@ -29,32 +29,38 @@ function App() {
     <div className="min-h-screen bg-[var(--tm-paper)]">
       <header className="bg-[var(--tm-paper)] border-b border-black/10">
         <div className="max-w-7xl mx-auto px-5 py-10">
-          <div className="flex items-center gap-4">
-            <img
-              src={timeMosaicLogo}
-              alt="TimeMosaic"
-              className="h-[72px] w-[72px]"
-              decoding="async"
-              loading="eager"
-            />
-            <h1 className="text-4xl font-extralight font-serif tracking-[0.02em] text-stone-900">
-              TimeMosaic
-            </h1>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
+              <img
+                src={timeMosaicLogo}
+                alt="TimeMosaic"
+                className="h-[72px] w-[72px]"
+                decoding="async"
+                loading="eager"
+              />
+              <h1 className="text-4xl font-extralight font-serif tracking-[0.02em] text-stone-900">
+                TimeMosaic
+              </h1>
+            </div>
+
+            <div className="min-w-0 flex-1 flex justify-end">
+              <div className="w-full max-w-4xl">
+                <TagSelector
+                  allTags={tags}
+                  selectedTags={selectedTags}
+                  onSelectTag={handleSelectTag}
+                  onRemoveTag={handleRemoveTag}
+                  loading={tagsLoading}
+                  error={tagsError}
+                  variant="header"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-5 py-8 space-y-6">
-
-        <TagSelector
-          allTags={tags}
-          selectedTags={selectedTags}
-          onSelectTag={handleSelectTag}
-          onRemoveTag={handleRemoveTag}
-          loading={tagsLoading}
-          error={tagsError}
-        />
-
         {selectedTags.length > 0 && (
           <>
             {columnsLoading ? (

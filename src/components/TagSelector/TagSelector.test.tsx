@@ -114,6 +114,22 @@ describe('TagSelector', () => {
     expect(economyTagButton).toBeDisabled();
   });
 
+  it('ヘッダー版では補助テキストを表示しない', () => {
+    render(
+      <TagSelector
+        allTags={mockTags}
+        selectedTags={[]}
+        onSelectTag={vi.fn() as unknown as (tag: string) => void}
+        onRemoveTag={vi.fn() as unknown as (tag: string) => void}
+        variant="header"
+      />
+    );
+
+    expect(screen.queryByText('タグで絞り込む')).not.toBeInTheDocument();
+    expect(screen.queryByText('未選択（クリックで追加）')).not.toBeInTheDocument();
+    expect(screen.getByText('#歴史 +')).toBeInTheDocument();
+  });
+
   it('loading中は「読み込み中...」を表示する', () => {
     render(
       <TagSelector
