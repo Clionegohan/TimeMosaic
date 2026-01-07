@@ -139,20 +139,6 @@ describe('API Handlers (ATDD)', () => {
       });
     });
 
-    it.skip('各カラムのイベントは昇順（asc）でソートされている', async () => {
-      const selectedTags = ['歴史'];
-      const result = await getColumns(sampleFilePath, selectedTags);
-
-      const historyColumn = result.columns[0];
-
-      // 年号順にソートされていることを確認
-      for (let i = 0; i < historyColumn.events.length - 1; i++) {
-        const current = historyColumn.events[i].date.year;
-        const next = historyColumn.events[i + 1].date.year;
-        expect(current).toBeLessThanOrEqual(next);
-      }
-    });
-
     it('同じイベントが複数カラムに表示される（複数タグ保持時）', async () => {
       const selectedTags = ['歴史', '日本'];
       const result = await getColumns(sampleFilePath, selectedTags);
