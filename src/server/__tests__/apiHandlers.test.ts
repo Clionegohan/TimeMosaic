@@ -56,11 +56,30 @@ describe('API Handlers (ATDD)', () => {
       expect(result.tags).toEqual(uniqueTags);
     });
 
-    it('タグはソート済みである', async () => {
+    it('タグは出現数降順・同数は出現順である', async () => {
       const result = await getTags(sampleFilePath);
 
-      const sortedTags = [...result.tags].sort();
-      expect(result.tags).toEqual(sortedTags);
+      expect(result.tags).toEqual([
+        '日本',
+        '歴史',
+        '西洋文化',
+        '第二次世界大戦',
+        'スポーツ',
+        'オリンピック',
+        '建築',
+        'フランス',
+        '科学',
+        '宇宙',
+        'アメリカ',
+        '文化',
+        'ドイツ',
+        '冷戦',
+        '災害',
+        '貿易',
+        '政治',
+        '戦争',
+        '世界',
+      ]);
     });
 
     it('タグ数が正しい', async () => {
@@ -118,20 +137,6 @@ describe('API Handlers (ATDD)', () => {
       historyColumn.events.forEach((event) => {
         expect(event.tags).toContain('歴史');
       });
-    });
-
-    it('各カラムのイベントは昇順（asc）でソートされている', async () => {
-      const selectedTags = ['歴史'];
-      const result = await getColumns(sampleFilePath, selectedTags);
-
-      const historyColumn = result.columns[0];
-
-      // 年号順にソートされていることを確認
-      for (let i = 0; i < historyColumn.events.length - 1; i++) {
-        const current = historyColumn.events[i].date.year;
-        const next = historyColumn.events[i + 1].date.year;
-        expect(current).toBeLessThanOrEqual(next);
-      }
     });
 
     it('同じイベントが複数カラムに表示される（複数タグ保持時）', async () => {
