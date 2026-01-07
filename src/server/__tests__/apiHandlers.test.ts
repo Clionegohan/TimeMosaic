@@ -120,7 +120,7 @@ describe('API Handlers (ATDD)', () => {
       });
     });
 
-    it.skip('各カラムのイベントは昇順（asc）でソートされている', async () => {
+    it('各カラムのイベントは昇順（asc）でソートされている', async () => {
       const selectedTags = ['歴史'];
       const result = await getColumns(sampleFilePath, selectedTags);
 
@@ -131,20 +131,6 @@ describe('API Handlers (ATDD)', () => {
         const current = historyColumn.events[i].date.year;
         const next = historyColumn.events[i + 1].date.year;
         expect(current).toBeLessThanOrEqual(next);
-      }
-    });
-
-    it.skip('各カラムのイベントは降順（desc）でソートされている', async () => {
-      const selectedTags = ['歴史'];
-      const result = await getColumns(sampleFilePath, selectedTags);
-
-      const historyColumn = result.columns[0];
-
-      // 年号順（新しい順）にソートされていることを確認
-      for (let i = 0; i < historyColumn.events.length - 1; i++) {
-        const current = historyColumn.events[i].date.year;
-        const next = historyColumn.events[i + 1].date.year;
-        expect(current).toBeGreaterThanOrEqual(next);
       }
     });
 
